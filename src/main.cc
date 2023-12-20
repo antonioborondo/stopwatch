@@ -10,7 +10,7 @@ namespace po = boost::program_options;
 void db()
 {
     sqlite3* db;
-    sqlite3_open("test.db", &db);
+    sqlite3_open("sw.db", &db);
     sqlite3_close(db);
 }
 

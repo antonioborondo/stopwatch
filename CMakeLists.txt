@@ -16,3 +16,7 @@ target_link_libraries(sw
     Boost::program_options
     SQLite::SQLite3
 )
+
+add_custom_command(TARGET sw POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/sw.db ${PROJECT_BINARY_DIR}/sw.db
+)
