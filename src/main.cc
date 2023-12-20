@@ -1,5 +1,7 @@
+// clang-format off
 #include <boost/program_options.hpp>
 #include <sqlite3.h>
+// clang-format on
 
 #include <iostream>
 
