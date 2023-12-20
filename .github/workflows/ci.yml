@@ -1,0 +1,38 @@
+﻿name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Lint
+      uses: DoozyX/clang-format-lint-action@v0.13
+      with:
+        clangFormatVersion: 13
+  build:
+    needs: clang-format
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Conan
+        run: pip install conan==2.0.7
+      - name: Configure Conan
+        run: conan profile detect
+      - name: Install Conan packages
+        run: conan install . --output-folder=build --build=missing --settings compiler=gcc --settings compiler.cppstd=17 --settings build_type=Release
+      - name: Configure
+        run: cmake --preset conan-release
+      - name: Build
+        run: cmake --build --preset conan-release
