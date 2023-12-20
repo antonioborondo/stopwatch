@@ -5,6 +5,7 @@ project(stopwatch VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(SQLite3 REQUIRED)
 
 add_executable(sw
     src/main.cc
@@ -13,4 +14,5 @@ add_executable(sw
 target_link_libraries(sw
     PRIVATE
     Boost::program_options
+    SQLite::SQLite3
 )

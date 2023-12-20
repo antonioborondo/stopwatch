@@ -1,8 +1,16 @@
 #include <boost/program_options.hpp>
+#include <sqlite3.h>
 
 #include <iostream>
 
 namespace po = boost::program_options;
+
+void db()
+{
+    sqlite3* db;
+    sqlite3_open("test.db", &db);
+    sqlite3_close(db);
+}
 
 int main(int argc, char** argv)
 {
@@ -50,6 +58,8 @@ int main(int argc, char** argv)
 
         return 1;
     }
+
+    db();
 
     return 0;
 }
