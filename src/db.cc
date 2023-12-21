@@ -2,7 +2,7 @@
 
 Db::Db()
 {
-    sqlite3_open("sw.db", &db_);
+    sqlite3_open("time_tracker.db", &db_);
 
     std::string sql{"CREATE TABLE IF NOT EXISTS log (timestamp TEXT PRIMARY KEY NOT NULL "
                     "DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')), type INTEGER NOT NULL)"};
