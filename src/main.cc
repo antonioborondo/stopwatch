@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         }
         else
         {
-            std::cout << "Usage: sw [OPTION]" << std::endl;
+            std::cout << "Usage: time_tracker [OPTION]" << std::endl;
             std::cout << options_description << std::endl;
         }
     }
