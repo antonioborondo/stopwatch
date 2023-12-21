@@ -5,7 +5,7 @@ Db::Db()
     sqlite3_open("sw.db", &db_);
 
     std::string sql{"CREATE TABLE IF NOT EXISTS log (timestamp TEXT PRIMARY KEY NOT NULL "
-        "DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')), type INTEGER NOT NULL)"};
+                    "DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')), type INTEGER NOT NULL)"};
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
 
@@ -144,13 +144,13 @@ int Db::GetLastType()
 
 void Db::DeleteLast()
 {
-    char *zErrMsg = 0;
+    char* zErrMsg = 0;
     std::string sql{"DELETE FROM log WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
 
     int rc = sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &zErrMsg);
-    if( rc!=SQLITE_OK ){
-
-      fprintf(stderr, "SQL error: %s\n", zErrMsg);
-      sqlite3_free(zErrMsg);
+    if(rc != SQLITE_OK)
+    {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
     }
 }
