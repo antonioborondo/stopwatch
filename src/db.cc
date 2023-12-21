@@ -4,8 +4,12 @@ Db::Db()
 {
     sqlite3_open("time_tracker.db", &db_);
 
-    std::string sql{"CREATE TABLE IF NOT EXISTS log (timestamp TEXT PRIMARY KEY NOT NULL "
-                    "DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')), type INTEGER NOT NULL)"};
+    std::string sql{"CREATE TABLE IF NOT EXISTS log"
+                    "("
+                    "   timestamp TEXT PRIMARY KEY NOT NULL DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')),"
+                    "   type INTEGER NOT NULL"
+                    ")"};
+
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
 
