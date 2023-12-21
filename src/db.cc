@@ -21,5 +21,8 @@ void Db::Log(LogType log_type)
 
 std::string Db::Summary()
 {
+    std::string sql{"SELECT round(CAST (SUM(difference) * 24 AS REAL), 2) FROM (SELECT records.login AS login, records.logout AS logout, julianday(records.logout) - julianday(records.login) AS difference FROM (SELECT login.timestamp AS login, logout.timestamp AS logout FROM (SELECT timestamp, row_number() OVER (ORDER BY timestamp) AS row_number FROM log WHERE timestamp >= date('now') AND type = 1) AS login, (SELECT timestamp, row_number() OVER (ORDER BY timestamp) AS row_number FROM log WHERE timestamp >= date('now') AND type = 0) AS logout WHERE login.row_number = logout.row_number) as records)"};
+    sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
+
     return std::string{};
 }
