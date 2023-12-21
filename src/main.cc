@@ -1,3 +1,5 @@
+#include "db.h"
+
 #include <boost/program_options.hpp>
 
 #include <iostream>
@@ -25,14 +27,20 @@ int main(int argc, char** argv)
         if(variables_map.count("login"))
         {
             std::cout << "Login" << std::endl;
+            Db db;
+            db.Log(Db::LogType::kIn);
         }
         else if(variables_map.count("logout"))
         {
             std::cout << "Logout" << std::endl;
+            Db db;
+            db.Log(Db::LogType::kOut);
         }
         else if(variables_map.count("summary"))
         {
-            std::cout << "Summary" << std::endl;
+            std::cout << "Summary:" << std::endl;
+            Db db;
+            std::cout << db.Summary() << " hours" << std::endl;
         }
         else if(variables_map.count("version"))
         {
