@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         {
             std::cout << "Summary:" << std::endl;
             Db db;
-            std::cout << db.Summary() << std::endl;
+            std::cout << db.Summary() << " hours" << std::endl;
         }
         else if(variables_map.count("version"))
         {

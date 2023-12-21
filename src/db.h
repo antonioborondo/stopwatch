@@ -20,5 +20,9 @@ public:
 
     void Log(LogType log_type);
 
+    int GetLastType();
+
+    void DeleteLast();
+
     std::string Summary();
 };
