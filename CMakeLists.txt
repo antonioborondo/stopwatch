@@ -8,6 +8,7 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(SQLite3 REQUIRED)
 
 add_executable(sw
+    src/db.cc
     src/main.cc
 )
 

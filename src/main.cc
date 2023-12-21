@@ -1,43 +1,10 @@
-// clang-format off
+#include "db.h"
+
 #include <boost/program_options.hpp>
-#include <sqlite3.h>
-// clang-format on
 
 #include <iostream>
-#include <string>
 
 namespace po = boost::program_options;
-
-class Db
-{
-    sqlite3* db_;
-
-public:
-    Db()
-    {
-        sqlite3_open("sw.db", &db_);
-
-        std::string sql{"CREATE TABLE IF NOT EXISTS log (timestamp TEXT PRIMARY KEY NOT NULL, type INTEGER NOT NULL)"};
-        sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
-    }
-
-    ~Db()
-    {
-        sqlite3_close(db_);
-    }
-
-    void login()
-    {
-        std::string sql{"INSERT INTO log (timestamp, type) VALUES(datetime(CURRENT_TIMESTAMP, 'localtime'), 1)"};
-        sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
-    }
-
-    void logout()
-    {
-        std::string sql{"INSERT INTO log (timestamp, type) VALUES(datetime(CURRENT_TIMESTAMP, 'localtime'), 0)"};
-        sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
-    }
-};
 
 int main(int argc, char** argv)
 {
@@ -61,17 +28,19 @@ int main(int argc, char** argv)
         {
             std::cout << "Login" << std::endl;
             Db db;
-            db.login();
+            db.Log(Db::LogType::kIn);
         }
         else if(variables_map.count("logout"))
         {
             std::cout << "Logout" << std::endl;
             Db db;
-            db.logout();
+            db.Log(Db::LogType::kOut);
         }
         else if(variables_map.count("summary"))
         {
-            std::cout << "Summary" << std::endl;
+            std::cout << "Summary:" << std::endl;
+            Db db;
+            std::cout << db.Summary() << std::endl;
         }
         else if(variables_map.count("version"))
         {
