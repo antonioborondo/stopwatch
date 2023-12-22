@@ -1,4 +1,5 @@
 #include "db.h"
+#include "record.h"
 
 #include <gtest/gtest.h>
 
@@ -10,7 +11,8 @@ protected:
 
 TEST_F(DbTest, AddRecord)
 {
-    const std::string timestamp{"2023-10-23 09:00:00.000"};
-    ASSERT_TRUE(db_.AddRecord(Db::Type::kStart, timestamp));
-    ASSERT_EQ(timestamp, db_.GetLastRecordTimestamp());
+    const Record record{Record::Type::kStart, "2023-10-23 09:00:00.000"};
+
+    ASSERT_TRUE(db_.AddRecord(record));
+    ASSERT_EQ(record.GetTimestamp(), db_.GetLastRecordTimestamp());
 }

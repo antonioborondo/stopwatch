@@ -163,13 +163,35 @@ void Db::DeleteLast()
     }
 }
 
-bool Db::AddRecord(Type type, const std::string& timestamp)
+bool Db::AddRecord(Record::Type type, const std::string& timestamp)
 {
     std::string sql{"INSERT INTO records (type) VALUES(" + std::to_string(static_cast<int>(type)) + ")"};
 
     if(!timestamp.empty())
     {
         sql = "INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(type)) + ", '" + timestamp + "')";
+    }
+
+    char* error_message{nullptr};
+    const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
+    if(result != SQLITE_OK)
+    {
+        std::cerr << "SQL error: " << error_message << std::endl;
+        sqlite3_free(error_message);
+
+        return false;
+    }
+
+    return true;
+}
+
+bool Db::AddRecord(const Record& record)
+{
+    std::string sql{"INSERT INTO records (type) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ")"};
+
+    if(!record.GetTimestamp().empty())
+    {
+        sql = "INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ", '" + record.GetTimestamp() + "')";
     }
 
     char* error_message{nullptr};

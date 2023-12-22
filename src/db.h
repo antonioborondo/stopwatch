@@ -1,5 +1,7 @@
 #pragma once
 
+#include "record.h"
+
 #include <string>
 
 struct sqlite3;
@@ -27,14 +29,9 @@ public:
 
     std::string Summary();
 
+    bool AddRecord(Record::Type type, const std::string& timestamp = "");
 
-    enum class Type
-    {
-        kStop = 0,
-        kStart,
-    };
-
-    bool AddRecord(Type type, const std::string& timestamp = "");
+    bool AddRecord(const Record& record);
 
     std::string GetLastRecordTimestamp();
 };
