@@ -1,5 +1,7 @@
 #include "db.h"
 
+#include <sqlite3.h>
+
 Db::Db()
 {
     sqlite3_open("time_tracker.db", &db_);
