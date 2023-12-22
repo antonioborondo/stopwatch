@@ -26,4 +26,15 @@ public:
     void DeleteLast();
 
     std::string Summary();
+
+
+    enum class Type
+    {
+        kStop = 0,
+        kStart,
+    };
+
+    bool AddRecord(Type type, const std::string& timestamp = "");
+
+    std::string GetLastRecordTimestamp();
 };
