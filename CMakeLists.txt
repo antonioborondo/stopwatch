@@ -8,6 +8,11 @@ add_library(time_tracker_common STATIC
     src/db.cc
 )
 
+target_include_directories(time_tracker_common
+    PUBLIC
+    src
+)
+
 find_package(SQLite3 REQUIRED)
 
 target_link_libraries(time_tracker_common
