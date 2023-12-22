@@ -29,9 +29,9 @@ public:
 
     std::string Summary();
 
-    bool AddRecord(Record::Type type, const std::string& timestamp = "");
-
     bool AddRecord(const Record& record);
+
+    Record GetLastRecord();
 
     std::string GetLastRecordTimestamp();
 };

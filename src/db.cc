@@ -11,7 +11,7 @@ Db::Db()
     std::string sql{"CREATE TABLE IF NOT EXISTS records"
                     "("
                     "   type INTEGER NOT NULL,"
-                    "   timestamp TEXT PRIMARY KEY NOT NULL DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime'))"
+                    "   timestamp TEXT PRIMARY KEY NOT NULL"
                     ")"};
 
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
@@ -153,7 +153,7 @@ int Db::GetLastType()
 void Db::DeleteLast()
 {
     char* zErrMsg = 0;
-    std::string sql{"DELETE FROM log WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
+    std::string sql{"DELETE FROM records WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
 
     int rc = sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &zErrMsg);
     if(rc != SQLITE_OK)
@@ -163,36 +163,9 @@ void Db::DeleteLast()
     }
 }
 
-bool Db::AddRecord(Record::Type type, const std::string& timestamp)
-{
-    std::string sql{"INSERT INTO records (type) VALUES(" + std::to_string(static_cast<int>(type)) + ")"};
-
-    if(!timestamp.empty())
-    {
-        sql = "INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(type)) + ", '" + timestamp + "')";
-    }
-
-    char* error_message{nullptr};
-    const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
-    if(result != SQLITE_OK)
-    {
-        std::cerr << "SQL error: " << error_message << std::endl;
-        sqlite3_free(error_message);
-
-        return false;
-    }
-
-    return true;
-}
-
 bool Db::AddRecord(const Record& record)
 {
-    std::string sql{"INSERT INTO records (type) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ")"};
-
-    if(!record.GetTimestamp().empty())
-    {
-        sql = "INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ", '" + record.GetTimestamp() + "')";
-    }
+    const std::string sql{"INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ", '" + record.GetTimestamp() + "')"};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
@@ -242,4 +215,43 @@ std::string Db::GetLastRecordTimestamp()
     sqlite3_finalize(stmt);
 
     return result;
+}
+
+Record Db::GetLastRecord()
+{
+    std::string sql{"SELECT type, timestamp FROM records ORDER BY timestamp DESC LIMIT 1"};
+
+    sqlite3_stmt* stmt{nullptr};
+
+    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
+
+    int type;
+    std::string timestamp;
+
+    int idx = 0;
+
+    while(1)
+    {
+        retval = sqlite3_step(stmt);
+
+        if(retval == SQLITE_ROW)
+        {
+            type = sqlite3_column_int(stmt, 0);
+            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        }
+        else if(retval == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            printf("Some error encountered\n");
+            break;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+
+    return Record{static_cast<Record::Type>(type), timestamp};
 }

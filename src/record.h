@@ -18,6 +18,8 @@ public:
     std::string GetTimestamp() const;
 
 private:
+    std::string GetCurrentTimestamp();
+
     Type type_;
 
     std::string timestamp_;
