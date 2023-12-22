@@ -1,8 +1,7 @@
 #include "db.h"
 
-#include <sqlite3.h>
-
 #include <iostream>
+#include <sqlite3.h>
 
 Db::Db()
 {
