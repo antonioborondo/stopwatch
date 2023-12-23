@@ -42,7 +42,7 @@ std::string Db::Summary()
                     "FROM                                                                       "
                     "(                                                                          "
                     "    SELECT                                                                 "
-                    "        julianday(records.logout) - julianday(records.login) AS difference "
+                    "        julianday(records2.logout) - julianday(records2.login) AS difference "
                     "    FROM                                                                   "
                     "    (                                                                      "
                     "        SELECT                                                             "
@@ -54,7 +54,7 @@ std::string Db::Summary()
                     "                row_number() OVER (ORDER BY timestamp) AS row_number,      "
                     "                timestamp                                                  "
                     "            FROM                                                           "
-                    "                log                                                        "
+                    "                records                                                    "
                     "            WHERE                                                          "
                     "                timestamp >= date('now')                                   "
                     "                AND                                                        "
@@ -65,7 +65,7 @@ std::string Db::Summary()
                     "                row_number() OVER (ORDER BY timestamp) AS row_number,      "
                     "                timestamp                                                  "
                     "            FROM                                                           "
-                    "                log                                                        "
+                    "                records                                                    "
                     "            WHERE                                                          "
                     "                timestamp >= date('now')                                   "
                     "                AND                                                        "
@@ -73,7 +73,7 @@ std::string Db::Summary()
                     "        ) AS logout_records                                                "
                     "        WHERE                                                              "
                     "            login_records.row_number = logout_records.row_number           "
-                    "    ) as records                                                           "
+                    "    ) as records2                                                           "
                     ")                                                                          "};
 
     sqlite3_stmt* stmt{nullptr};

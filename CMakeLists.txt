@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(time_tracker_common STATIC
     src/db.cc
     src/record.cc
+    src/time_utils.cc
 )
 
 target_include_directories(time_tracker_common
