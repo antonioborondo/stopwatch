@@ -44,5 +44,17 @@ TEST_F(DbTest, GetSummary)
     const Record record_2{Record::Type::kStop, "2023-10-23 10:00:00"};
     ASSERT_TRUE(db_.AddRecord(record_2));
 
-    std::cout << db_.Summary("2023-10-23");
+    ASSERT_EQ("1.000000", db_.Summary("2023-10-23"));
+}
+
+TEST_F(DbTest, GetSummaryWithPreviousDays)
+{
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStart, "2023-10-22 09:00:00"}));
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStop, "2023-10-22 10:00:00"}));
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStart, "2023-10-23 09:00:00"}));
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStop, "2023-10-23 10:00:00"}));
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStart, "2023-10-24 09:00:00"}));
+    ASSERT_TRUE(db_.AddRecord(Record{Record::Type::kStop, "2023-10-24 10:00:00"}));
+
+    ASSERT_EQ("1.000000", db_.Summary("2023-10-23"));
 }
