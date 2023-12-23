@@ -5,5 +5,5 @@
 namespace time_utils
 {
 std::string GetCurrentDate();
-std::string GetCurrentTimestamp();
+std::string GetCurrentDateAndTime();
 }
