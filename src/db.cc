@@ -115,7 +115,7 @@ std::string Db::Summary()
 
 int Db::GetLastType()
 {
-    std::string sql{"SELECT type FROM log ORDER BY timestamp DESC LIMIT 1"};
+    std::string sql{"SELECT type FROM records ORDER BY timestamp DESC LIMIT 1"};
 
     sqlite3_stmt* stmt{nullptr};
 
