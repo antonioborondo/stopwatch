@@ -162,6 +162,23 @@ void Db::DeleteLast()
     }
 }
 
+bool Db::DeleteRecords()
+{
+    const std::string sql{"DROP TABLE IF EXISTS records"};
+
+    char* error_message{nullptr};
+    const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
+    if(result != SQLITE_OK)
+    {
+        std::cerr << "SQL error: " << error_message << std::endl;
+        sqlite3_free(error_message);
+
+        return false;
+    }
+
+    return true;
+}
+
 bool Db::AddRecord(const Record& record)
 {
     const std::string sql{"INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ", '" + record.GetTimestamp() + "')"};

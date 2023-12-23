@@ -29,6 +29,8 @@ public:
 
     std::string Summary();
 
+    bool DeleteRecords();
+
     bool AddRecord(const Record& record);
 
     Record GetLastRecord();

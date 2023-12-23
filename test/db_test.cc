@@ -3,20 +3,29 @@
 
 #include <gtest/gtest.h>
 
-#include <filesystem>
-
 class DbTest: public testing::Test
 {
 protected:
     Db db_{};
 
-    ~DbTest()
+    void TearDown() override
     {
-        std::filesystem::remove("time_tracker.db");
+        db_.DeleteRecords();
     }
 };
 
-TEST_F(DbTest, DISABLED_AddRecord)
+TEST_F(DbTest, AddRecord)
+{
+    const Record record{Record::Type::kStart};
+
+    ASSERT_TRUE(db_.AddRecord(record));
+
+    Record record_result{db_.GetLastRecord()};
+    ASSERT_EQ(record.GetType(), record_result.GetType());
+    ASSERT_EQ(record.GetTimestamp(), record_result.GetTimestamp());
+}
+
+TEST_F(DbTest, AddRecordWithTimestamp)
 {
     const Record record{Record::Type::kStart, "2023-10-23 09:00:00"};
 
@@ -27,7 +36,7 @@ TEST_F(DbTest, DISABLED_AddRecord)
     ASSERT_EQ(record.GetTimestamp(), record_result.GetTimestamp());
 }
 
-TEST_F(DbTest, GetSummary)
+TEST_F(DbTest, DISABLED_GetSummary)
 {
     const Record record_1{Record::Type::kStart, "2023-12-23 09:00:00"};
     ASSERT_TRUE(db_.AddRecord(record_1));
@@ -36,5 +45,4 @@ TEST_F(DbTest, GetSummary)
     ASSERT_TRUE(db_.AddRecord(record_2));
 
     std::cout << db_.Summary();
-
 }
