@@ -27,13 +27,11 @@ public:
 
     void DeleteLast();
 
-    std::string Summary();
+    std::string Summary(const std::string& date = "");
 
     bool DeleteRecords();
 
     bool AddRecord(const Record& record);
 
     Record GetLastRecord();
-
-    std::string GetLastRecordTimestamp();
 };

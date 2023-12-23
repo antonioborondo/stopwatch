@@ -36,13 +36,13 @@ TEST_F(DbTest, AddRecordWithTimestamp)
     ASSERT_EQ(record.GetTimestamp(), record_result.GetTimestamp());
 }
 
-TEST_F(DbTest, DISABLED_GetSummary)
+TEST_F(DbTest, GetSummary)
 {
-    const Record record_1{Record::Type::kStart, "2023-12-23 09:00:00"};
+    const Record record_1{Record::Type::kStart, "2023-10-23 09:00:00"};
     ASSERT_TRUE(db_.AddRecord(record_1));
 
-    const Record record_2{Record::Type::kStop, "2023-12-23 10:00:00"};
+    const Record record_2{Record::Type::kStop, "2023-10-23 10:00:00"};
     ASSERT_TRUE(db_.AddRecord(record_2));
 
-    std::cout << db_.Summary();
+    std::cout << db_.Summary("2023-10-23");
 }

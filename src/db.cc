@@ -1,5 +1,7 @@
 #include "db.h"
 
+#include "time_utils.h"
+
 #include <iostream>
 #include <sqlite3.h>
 
@@ -28,8 +30,14 @@ void Db::Log(LogType log_type)
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
 
-std::string Db::Summary()
+std::string Db::Summary(const std::string& date)
 {
+    std::string day = date;
+    if(day.empty())
+    {
+        day = time_utils::GetCurrentDate();
+    }
+
     bool tempRecord{GetLastType() == 1};
 
     if(tempRecord)
@@ -56,7 +64,7 @@ std::string Db::Summary()
                     "            FROM                                                           "
                     "                records                                                    "
                     "            WHERE                                                          "
-                    "                timestamp >= date('now')                                   "
+                    "                date(timestamp) = '" + day + "'                              "
                     "                AND                                                        "
                     "                type = 1                                                   "
                     "        ) AS login_records,                                                "
@@ -67,7 +75,7 @@ std::string Db::Summary()
                     "            FROM                                                           "
                     "                records                                                    "
                     "            WHERE                                                          "
-                    "                timestamp >= date('now')                                   "
+                    "                date(timestamp) = '" + day + "'                              "
                     "                AND                                                        "
                     "                type = 0                                                   "
                     "        ) AS logout_records                                                "
@@ -194,43 +202,6 @@ bool Db::AddRecord(const Record& record)
     }
 
     return true;
-}
-
-std::string Db::GetLastRecordTimestamp()
-{
-    std::string sql{"SELECT timestamp FROM records ORDER BY timestamp DESC LIMIT 1"};
-
-    sqlite3_stmt* stmt{nullptr};
-
-    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
-    std::string result;
-
-    int idx = 0;
-
-    while(1)
-    {
-        retval = sqlite3_step(stmt);
-
-        if(retval == SQLITE_ROW)
-        {
-            auto temp = sqlite3_column_text(stmt, 0);
-            result = reinterpret_cast<const char*>(temp);
-        }
-        else if(retval == SQLITE_DONE)
-        {
-            break;
-        }
-        else
-        {
-            sqlite3_finalize(stmt);
-            printf("Some error encountered\n");
-            break;
-        }
-    }
-
-    sqlite3_finalize(stmt);
-
-    return result;
 }
 
 Record Db::GetLastRecord()
