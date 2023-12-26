@@ -39,3 +39,10 @@ jobs:
       - name: Test
         working-directory: build
         run: ctest --verbose --preset conan-release
+      - name: Pack
+        working-directory: build
+        run: cpack -G "DEB"
+      - name: Publish
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/*.deb
