@@ -1,4 +1,5 @@
 #include "db.h"
+#include "record.h"
 
 #include <boost/program_options.hpp>
 
@@ -24,17 +25,18 @@ int main(int argc, char** argv)
         po::variables_map variables_map;
         po::store(po::parse_command_line(argc, argv, options_description), variables_map);
 
+        Db db;
         if(variables_map.count("start"))
         {
             std::cout << "Start time tracker" << std::endl;
-            Db db;
-            db.Log(Db::LogType::kIn);
+            const Record record{Record::Type::kStart};
+            db.AddRecord(record);
         }
         else if(variables_map.count("stop"))
         {
             std::cout << "Stop time tracker" << std::endl;
-            Db db;
-            db.Log(Db::LogType::kOut);
+            const Record record{Record::Type::kStop};
+            db.AddRecord(record);
         }
         else if(variables_map.count("summary"))
         {

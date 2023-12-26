@@ -1,7 +1,10 @@
 #pragma once
 
-#include <sqlite3.h>
+#include "record.h"
+
 #include <string>
+
+struct sqlite3;
 
 class Db
 {
@@ -24,5 +27,11 @@ public:
 
     void DeleteLast();
 
-    std::string Summary();
+    std::string Summary(const std::string& date = "");
+
+    bool DeleteRecords();
+
+    bool AddRecord(const Record& record);
+
+    Record GetLastRecord();
 };

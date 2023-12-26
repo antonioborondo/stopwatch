@@ -1,13 +1,20 @@
 #include "db.h"
 
+#include "time_utils.h"
+
+#include <fmt/format.h>
+
+#include <iostream>
+#include <sqlite3.h>
+
 Db::Db()
 {
     sqlite3_open("time_tracker.db", &db_);
 
-    std::string sql{"CREATE TABLE IF NOT EXISTS log"
+    std::string sql{"CREATE TABLE IF NOT EXISTS records"
                     "("
-                    "   timestamp TEXT PRIMARY KEY NOT NULL DEFAULT(strftime('%Y-%m-%d %H:%M:%f', 'now', 'localtime')),"
-                    "   type INTEGER NOT NULL"
+                    "   type INTEGER NOT NULL,"
+                    "   timestamp TEXT PRIMARY KEY NOT NULL"
                     ")"};
 
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
@@ -25,8 +32,14 @@ void Db::Log(LogType log_type)
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
 
-std::string Db::Summary()
+std::string Db::Summary(const std::string& date)
 {
+    std::string day = date;
+    if(day.empty())
+    {
+        day = time_utils::GetCurrentDate();
+    }
+
     bool tempRecord{GetLastType() == 1};
 
     if(tempRecord)
@@ -34,44 +47,46 @@ std::string Db::Summary()
         Log(LogType::kOut);
     }
 
-    std::string sql{"SELECT                                                                     "
-                    "    CAST (SUM(difference) * 24 AS REAL)                                    "
-                    "FROM                                                                       "
-                    "(                                                                          "
-                    "    SELECT                                                                 "
-                    "        julianday(records.logout) - julianday(records.login) AS difference "
-                    "    FROM                                                                   "
-                    "    (                                                                      "
-                    "        SELECT                                                             "
-                    "            login_records.timestamp AS login,                              "
-                    "            logout_records.timestamp AS logout                             "
-                    "        FROM                                                               "
-                    "        (                                                                  "
-                    "            SELECT                                                         "
-                    "                row_number() OVER (ORDER BY timestamp) AS row_number,      "
-                    "                timestamp                                                  "
-                    "            FROM                                                           "
-                    "                log                                                        "
-                    "            WHERE                                                          "
-                    "                timestamp >= date('now')                                   "
-                    "                AND                                                        "
-                    "                type = 1                                                   "
-                    "        ) AS login_records,                                                "
-                    "        (                                                                  "
-                    "            SELECT                                                         "
-                    "                row_number() OVER (ORDER BY timestamp) AS row_number,      "
-                    "                timestamp                                                  "
-                    "            FROM                                                           "
-                    "                log                                                        "
-                    "            WHERE                                                          "
-                    "                timestamp >= date('now')                                   "
-                    "                AND                                                        "
-                    "                type = 0                                                   "
-                    "        ) AS logout_records                                                "
-                    "        WHERE                                                              "
-                    "            login_records.row_number = logout_records.row_number           "
-                    "    ) as records                                                           "
-                    ")                                                                          "};
+    const auto sql_format_string{"SELECT                                                                       "
+                                 "    CAST (SUM(difference) * 24 AS REAL)                                      "
+                                 "FROM                                                                         "
+                                 "(                                                                            "
+                                 "    SELECT                                                                   "
+                                 "        julianday(records2.logout) - julianday(records2.login) AS difference "
+                                 "    FROM                                                                     "
+                                 "    (                                                                        "
+                                 "        SELECT                                                               "
+                                 "            login_records.timestamp AS login,                                "
+                                 "            logout_records.timestamp AS logout                               "
+                                 "        FROM                                                                 "
+                                 "        (                                                                    "
+                                 "            SELECT                                                           "
+                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
+                                 "                timestamp                                                    "
+                                 "            FROM                                                             "
+                                 "                records                                                      "
+                                 "            WHERE                                                            "
+                                 "                date(timestamp) = '{0}'                                      "
+                                 "                AND                                                          "
+                                 "                type = 1                                                     "
+                                 "        ) AS login_records,                                                  "
+                                 "        (                                                                    "
+                                 "            SELECT                                                           "
+                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
+                                 "                timestamp                                                    "
+                                 "            FROM                                                             "
+                                 "                records                                                      "
+                                 "            WHERE                                                            "
+                                 "                date(timestamp) = '{0}'                                      "
+                                 "                AND                                                          "
+                                 "                type = 0                                                     "
+                                 "        ) AS logout_records                                                  "
+                                 "        WHERE                                                                "
+                                 "            login_records.row_number = logout_records.row_number             "
+                                 "    ) as records2                                                            "
+                                 ")                                                                            "};
+
+    const auto sql{fmt::format(sql_format_string, day)};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -112,7 +127,7 @@ std::string Db::Summary()
 
 int Db::GetLastType()
 {
-    std::string sql{"SELECT type FROM log ORDER BY timestamp DESC LIMIT 1"};
+    std::string sql{"SELECT type FROM records ORDER BY timestamp DESC LIMIT 1"};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -149,7 +164,7 @@ int Db::GetLastType()
 void Db::DeleteLast()
 {
     char* zErrMsg = 0;
-    std::string sql{"DELETE FROM log WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
+    std::string sql{"DELETE FROM records WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
 
     int rc = sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &zErrMsg);
     if(rc != SQLITE_OK)
@@ -157,4 +172,78 @@ void Db::DeleteLast()
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }
+}
+
+bool Db::DeleteRecords()
+{
+    const std::string sql{"DROP TABLE IF EXISTS records"};
+
+    char* error_message{nullptr};
+    const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
+    if(result != SQLITE_OK)
+    {
+        std::cerr << "SQL error: " << error_message << std::endl;
+        sqlite3_free(error_message);
+
+        return false;
+    }
+
+    return true;
+}
+
+bool Db::AddRecord(const Record& record)
+{
+    const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
+
+    char* error_message{nullptr};
+    const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
+    if(result != SQLITE_OK)
+    {
+        std::cerr << "SQL error: " << error_message << std::endl;
+        sqlite3_free(error_message);
+
+        return false;
+    }
+
+    return true;
+}
+
+Record Db::GetLastRecord()
+{
+    std::string sql{"SELECT type, timestamp FROM records ORDER BY timestamp DESC LIMIT 1"};
+
+    sqlite3_stmt* stmt{nullptr};
+
+    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
+
+    int type;
+    std::string timestamp;
+
+    int idx = 0;
+
+    while(1)
+    {
+        retval = sqlite3_step(stmt);
+
+        if(retval == SQLITE_ROW)
+        {
+            type = sqlite3_column_int(stmt, 0);
+            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        }
+        else if(retval == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            printf("Some error encountered\n");
+            break;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+
+    return Record{static_cast<Record::Type>(type), timestamp};
 }
