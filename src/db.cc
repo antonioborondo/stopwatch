@@ -2,6 +2,8 @@
 
 #include "time_utils.h"
 
+#include <fmt/format.h>
+
 #include <iostream>
 #include <sqlite3.h>
 
@@ -45,46 +47,46 @@ std::string Db::Summary(const std::string& date)
         Log(LogType::kOut);
     }
 
-    std::string sql{"SELECT                                                                       "
-                    "    CAST (SUM(difference) * 24 AS REAL)                                      "
-                    "FROM                                                                         "
-                    "(                                                                            "
-                    "    SELECT                                                                   "
-                    "        julianday(records2.logout) - julianday(records2.login) AS difference "
-                    "    FROM                                                                     "
-                    "    (                                                                        "
-                    "        SELECT                                                               "
-                    "            login_records.timestamp AS login,                                "
-                    "            logout_records.timestamp AS logout                               "
-                    "        FROM                                                                 "
-                    "        (                                                                    "
-                    "            SELECT                                                           "
-                    "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
-                    "                timestamp                                                    "
-                    "            FROM                                                             "
-                    "                records                                                      "
-                    "            WHERE                                                            "
-                    "                date(timestamp) = '" +
-        day + "'                              "
-              "                AND                                                          "
-              "                type = 1                                                     "
-              "        ) AS login_records,                                                  "
-              "        (                                                                    "
-              "            SELECT                                                           "
-              "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
-              "                timestamp                                                    "
-              "            FROM                                                             "
-              "                records                                                      "
-              "            WHERE                                                            "
-              "                date(timestamp) = '" +
-        day + "'                              "
-              "                AND                                                          "
-              "                type = 0                                                     "
-              "        ) AS logout_records                                                  "
-              "        WHERE                                                                "
-              "            login_records.row_number = logout_records.row_number             "
-              "    ) as records2                                                            "
-              ")                                                                            "};
+    const auto sql_format_string{"SELECT                                                                       "
+                                 "    CAST (SUM(difference) * 24 AS REAL)                                      "
+                                 "FROM                                                                         "
+                                 "(                                                                            "
+                                 "    SELECT                                                                   "
+                                 "        julianday(records2.logout) - julianday(records2.login) AS difference "
+                                 "    FROM                                                                     "
+                                 "    (                                                                        "
+                                 "        SELECT                                                               "
+                                 "            login_records.timestamp AS login,                                "
+                                 "            logout_records.timestamp AS logout                               "
+                                 "        FROM                                                                 "
+                                 "        (                                                                    "
+                                 "            SELECT                                                           "
+                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
+                                 "                timestamp                                                    "
+                                 "            FROM                                                             "
+                                 "                records                                                      "
+                                 "            WHERE                                                            "
+                                 "                date(timestamp) = '{0}'                                      "
+                                 "                AND                                                          "
+                                 "                type = 1                                                     "
+                                 "        ) AS login_records,                                                  "
+                                 "        (                                                                    "
+                                 "            SELECT                                                           "
+                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
+                                 "                timestamp                                                    "
+                                 "            FROM                                                             "
+                                 "                records                                                      "
+                                 "            WHERE                                                            "
+                                 "                date(timestamp) = '{0}'                                      "
+                                 "                AND                                                          "
+                                 "                type = 0                                                     "
+                                 "        ) AS logout_records                                                  "
+                                 "        WHERE                                                                "
+                                 "            login_records.row_number = logout_records.row_number             "
+                                 "    ) as records2                                                            "
+                                 ")                                                                            "};
+
+    const auto sql{fmt::format(sql_format_string, day)};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -191,7 +193,8 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const std::string sql{"INSERT INTO records (type, timestamp) VALUES(" + std::to_string(static_cast<int>(record.GetType())) + ", '" + record.GetTimestamp() + "')"};
+    const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
