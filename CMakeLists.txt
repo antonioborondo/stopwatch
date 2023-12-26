@@ -51,3 +51,7 @@ target_link_libraries(time_tracker_test
 enable_testing()
 
 add_test(NAME time_tracker_test COMMAND time_tracker_test)
+
+install(TARGETS time_tracker_test DESTINATION bin)
+
+include(CPack)
