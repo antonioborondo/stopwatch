@@ -1,5 +1,6 @@
 [requires]
 boost/1.83.0
+fmt/10.1.1
 gtest/1.14.0
 sqlite3/3.44.2
 

@@ -15,10 +15,12 @@ target_include_directories(time_tracker_common
     src
 )
 
+find_package(fmt REQUIRED)
 find_package(SQLite3 REQUIRED)
 
 target_link_libraries(time_tracker_common
     PRIVATE
+    fmt::fmt
     SQLite::SQLite3
 )
 
@@ -30,8 +32,8 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 
 target_link_libraries(time_tracker
     PRIVATE
-    time_tracker_common
     Boost::program_options
+    time_tracker_common
 )
 
 add_executable(time_tracker_test
@@ -42,8 +44,8 @@ find_package(GTest REQUIRED)
 
 target_link_libraries(time_tracker_test
     PRIVATE
-    time_tracker_common
     GTest::gtest_main
+    time_tracker_common
 )
 
 enable_testing()
