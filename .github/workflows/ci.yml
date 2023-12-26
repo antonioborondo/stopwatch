@@ -33,7 +33,7 @@ jobs:
       - name: Install Conan packages
         run: conan install . --output-folder=build --build=missing --settings compiler=gcc --settings compiler.cppstd=17 --settings build_type=Release
       - name: Configure
-        run: cmake --preset conan-release
+        run: cmake --preset conan-release -DCPACK_PACKAGE_CONTACT="${{ secrets.CONTACT }}"
       - name: Build
         run: cmake --build --preset conan-release
       - name: Test
