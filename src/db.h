@@ -3,6 +3,7 @@
 #include "record.h"
 #include "timestamp.h"
 
+#include <filesystem>
 #include <string>
 
 struct sqlite3;
@@ -30,4 +31,8 @@ public:
 
 private:
     std::string GetTime(double time_in_days);
+
+    std::filesystem::path GetDataDirectory();
+
+    void CreateDataDirectory(const std::filesystem::path& data_directory);
 };
