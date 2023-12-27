@@ -1,7 +1,5 @@
 #include "db.h"
 
-#include "timestamp.h"
-
 #include <fmt/format.h>
 
 #include <iostream>

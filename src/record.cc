@@ -1,7 +1,5 @@
 #include "record.h"
 
-#include "timestamp.h"
-
 Record::Record(Record::Type type, const std::string& timestamp):
     type_{type},
     timestamp_{timestamp}
