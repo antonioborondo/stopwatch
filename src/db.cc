@@ -106,7 +106,13 @@ std::string Db::Summary(const std::string& date)
         DeleteLast();
     }
 
-    return std::to_string(result);
+    int hours = result;
+    double minutesRemainder = (result - hours) * 60;
+    int minutes = minutesRemainder;
+    double secondsRemainder = (minutesRemainder - minutes) * 60;
+    int seconds = secondsRemainder;
+
+    return fmt::format("{0:02}:{1:02}:{1:02}", hours, minutes, seconds);
 }
 
 int Db::GetLastType()
