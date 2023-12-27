@@ -23,20 +23,12 @@ Db::~Db()
     sqlite3_close(db_);
 }
 
-void Db::Log(LogType log_type)
-{
-    std::string sql{
-        "INSERT INTO log (type) VALUES(" + std::to_string(static_cast<int>(log_type)) + ")"};
-    sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
-}
-
 std::string Db::Summary(const std::string& date)
 {
-    bool tempRecord{GetLastType() == 1};
-
-    if(tempRecord)
+    const auto last_record{GetLastRecord()};
+    if(last_record.GetType() == Record::Type::kStart)
     {
-        Log(LogType::kOut);
+        AddRecord(Record{Record::Type::kStop});
     }
 
     const auto sql_format_string{"SELECT                                                                       "
@@ -109,7 +101,7 @@ std::string Db::Summary(const std::string& date)
 
     sqlite3_finalize(stmt);
 
-    if(tempRecord)
+    if(last_record.GetType() == Record::Type::kStart)
     {
         DeleteLast();
     }
@@ -156,7 +148,7 @@ int Db::GetLastType()
 void Db::DeleteLast()
 {
     char* zErrMsg = 0;
-    std::string sql{"DELETE FROM records WHERE timestamp = (SELECT MAX(timestamp) FROM log)"};
+    std::string sql{"DELETE FROM records WHERE timestamp = (SELECT MAX(timestamp) FROM records)"};
 
     int rc = sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &zErrMsg);
     if(rc != SQLITE_OK)

@@ -16,14 +16,6 @@ public:
 
     ~Db();
 
-    enum class LogType
-    {
-        kOut = 0,
-        kIn,
-    };
-
-    void Log(LogType log_type);
-
     int GetLastType();
 
     void DeleteLast();
