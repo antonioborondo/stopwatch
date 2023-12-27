@@ -1,6 +1,6 @@
 #include "record.h"
 
-#include "time_utils.h"
+#include "timestamp.h"
 
 Record::Record(Record::Type type, const std::string& timestamp):
     type_{type},
