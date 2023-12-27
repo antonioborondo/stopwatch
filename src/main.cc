@@ -28,21 +28,19 @@ int main(int argc, char** argv)
         Db db;
         if(variables_map.count("start"))
         {
-            std::cout << "Start time tracker" << std::endl;
             const Record record{Record::Type::kStart};
             db.AddRecord(record);
+            std::cout << record.GetTimestamp() << std::endl;
         }
         else if(variables_map.count("stop"))
         {
-            std::cout << "Stop time tracker" << std::endl;
             const Record record{Record::Type::kStop};
             db.AddRecord(record);
+            std::cout << record.GetTimestamp() << std::endl;
         }
         else if(variables_map.count("summary"))
         {
-            std::cout << "Time tracker summary:" << std::endl;
-            Db db;
-            std::cout << db.Summary() << " hours" << std::endl;
+            std::cout << db.Summary() << std::endl;
         }
         else if(variables_map.count("version"))
         {
