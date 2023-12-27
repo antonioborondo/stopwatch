@@ -37,7 +37,7 @@ std::string Db::Summary(const std::string& date)
     std::string day = date;
     if(day.empty())
     {
-        day = time_utils::GetCurrentDate();
+        day = timestamp::GetCurrentDate();
     }
 
     bool tempRecord{GetLastType() == 1};

@@ -15,7 +15,7 @@ std::string GetCurrentTimestamp(const std::string& format)
 }
 }
 
-namespace time_utils
+namespace timestamp
 {
 std::string GetCurrentDate()
 {
