@@ -1,5 +1,7 @@
 #pragma once
 
+#include "timestamp.h"
+
 #include <string>
 
 class Record
@@ -11,7 +13,7 @@ public:
         kStart,
     };
 
-    Record(Type type, const std::string& timestamp = "");
+    Record(Type type, const std::string& timestamp = timestamp::GetCurrentDateAndTime());
 
     Type GetType() const;
 

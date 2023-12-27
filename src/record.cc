@@ -4,7 +4,7 @@
 
 Record::Record(Record::Type type, const std::string& timestamp):
     type_{type},
-    timestamp_{timestamp.empty() ? timestamp::GetCurrentDateAndTime() : timestamp}
+    timestamp_{timestamp}
 {
 }
 
