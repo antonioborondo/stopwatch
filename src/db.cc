@@ -34,12 +34,6 @@ void Db::Log(LogType log_type)
 
 std::string Db::Summary(const std::string& date)
 {
-    std::string day = date;
-    if(day.empty())
-    {
-        day = timestamp::GetCurrentDate();
-    }
-
     bool tempRecord{GetLastType() == 1};
 
     if(tempRecord)
@@ -86,7 +80,7 @@ std::string Db::Summary(const std::string& date)
                                  "    ) as records2                                                            "
                                  ")                                                                            "};
 
-    const auto sql{fmt::format(sql_format_string, day)};
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* stmt{nullptr};
 
