@@ -2,12 +2,17 @@
 
 #include <fmt/format.h>
 
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <sqlite3.h>
 
 Db::Db()
 {
-    sqlite3_open("time_tracker.db", &db_);
+    std::filesystem::path data_directory{GetDataDirectory()};
+    CreateDataDirectory(data_directory);
+    std::filesystem::path database_file_path{GetDataDirectory() /= "time_tracker.db"};
+    sqlite3_open(database_file_path.c_str(), &db_);
 
     std::string sql{"CREATE TABLE IF NOT EXISTS records"
                     "("
@@ -239,4 +244,29 @@ std::string Db::GetTime(double time_in_days)
     double seconds{seconds_in_minutes * 60};
 
     return fmt::format("{0:02}:{1:02}:{2:02}", static_cast<int>(hours), static_cast<int>(minutes), static_cast<int>(seconds));
+}
+
+std::filesystem::path Db::GetDataDirectory()
+{
+    std::filesystem::path data_directory;
+
+    const auto xdg_data_home_directory{std::getenv("XDG_DATA_HOME")};
+    if(xdg_data_home_directory && strlen(xdg_data_home_directory) != 0)
+    {
+        data_directory = xdg_data_home_directory;
+    }
+    else
+    {
+        data_directory = std::getenv("HOME");
+        data_directory /= ".local/share";
+    }
+
+    data_directory /= "time_tracker";
+
+    return data_directory;
+}
+
+void Db::CreateDataDirectory(const std::filesystem::path& data_directory)
+{
+    std::filesystem::create_directories(data_directory);
 }
