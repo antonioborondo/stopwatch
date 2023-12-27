@@ -31,44 +31,40 @@ std::string Db::Summary(const std::string& date)
         AddRecord(Record{Record::Type::kStop});
     }
 
-    const auto sql_format_string{"SELECT                                                                       "
-                                 "    CAST (SUM(difference) * 24 AS REAL)                                      "
-                                 "FROM                                                                         "
-                                 "(                                                                            "
-                                 "    SELECT                                                                   "
-                                 "        julianday(records2.logout) - julianday(records2.login) AS difference "
-                                 "    FROM                                                                     "
-                                 "    (                                                                        "
-                                 "        SELECT                                                               "
-                                 "            login_records.timestamp AS login,                                "
-                                 "            logout_records.timestamp AS logout                               "
-                                 "        FROM                                                                 "
-                                 "        (                                                                    "
-                                 "            SELECT                                                           "
-                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
-                                 "                timestamp                                                    "
-                                 "            FROM                                                             "
-                                 "                records                                                      "
-                                 "            WHERE                                                            "
-                                 "                date(timestamp) = '{0}'                                      "
-                                 "                AND                                                          "
-                                 "                type = 1                                                     "
-                                 "        ) AS login_records,                                                  "
-                                 "        (                                                                    "
-                                 "            SELECT                                                           "
-                                 "                row_number() OVER (ORDER BY timestamp) AS row_number,        "
-                                 "                timestamp                                                    "
-                                 "            FROM                                                             "
-                                 "                records                                                      "
-                                 "            WHERE                                                            "
-                                 "                date(timestamp) = '{0}'                                      "
-                                 "                AND                                                          "
-                                 "                type = 0                                                     "
-                                 "        ) AS logout_records                                                  "
-                                 "        WHERE                                                                "
-                                 "            login_records.row_number = logout_records.row_number             "
-                                 "    ) as records2                                                            "
-                                 ")                                                                            "};
+    const auto sql_format_string{R"(
+        SELECT
+            SUM(difference)
+        FROM
+        (
+            SELECT
+                julianday(stop_records.timestamp) -julianday(start_records.timestamp) AS difference
+            FROM
+            (
+                SELECT
+                    row_number() OVER(ORDER BY timestamp) AS row_number,
+                    timestamp
+                FROM
+                    records
+                WHERE
+                    date(timestamp) = '{0}'
+                    AND
+                    type=1
+            ) AS start_records,
+            (
+                SELECT
+                    row_number() OVER(ORDER BY timestamp) AS row_number,
+                    timestamp
+                FROM
+                    records
+                WHERE
+                    date(timestamp) = '{0}'
+                    AND
+                    type=0
+            ) AS stop_records
+            WHERE
+                start_records.row_number=stop_records.row_number
+        )
+    )"};
 
     const auto sql{fmt::format(sql_format_string, date)};
 
@@ -106,13 +102,7 @@ std::string Db::Summary(const std::string& date)
         DeleteLast();
     }
 
-    int hours = result;
-    double minutesRemainder = (result - hours) * 60;
-    int minutes = minutesRemainder;
-    double secondsRemainder = (minutesRemainder - minutes) * 60;
-    int seconds = secondsRemainder;
-
-    return fmt::format("{0:02}:{1:02}:{1:02}", hours, minutes, seconds);
+    return GetTime(result);
 }
 
 int Db::GetLastType()
@@ -236,4 +226,17 @@ Record Db::GetLastRecord()
     sqlite3_finalize(stmt);
 
     return Record{static_cast<Record::Type>(type), timestamp};
+}
+
+std::string Db::GetTime(double time_in_days)
+{
+    double hours{time_in_days * 24};
+
+    double minutes_in_hours{hours - static_cast<int>(hours)};
+    double minutes{minutes_in_hours * 60};
+
+    double seconds_in_minutes{minutes - static_cast<int>(minutes)};
+    double seconds{seconds_in_minutes * 60};
+
+    return fmt::format("{0:02}:{1:02}:{2:02}", static_cast<int>(hours), static_cast<int>(minutes), static_cast<int>(seconds));
 }

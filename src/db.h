@@ -27,4 +27,7 @@ public:
     bool AddRecord(const Record& record);
 
     Record GetLastRecord();
+
+private:
+    std::string GetTime(double time_in_days);
 };
