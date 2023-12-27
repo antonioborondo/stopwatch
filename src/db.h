@@ -1,6 +1,7 @@
 #pragma once
 
 #include "record.h"
+#include "timestamp.h"
 
 #include <string>
 
@@ -27,7 +28,7 @@ public:
 
     void DeleteLast();
 
-    std::string Summary(const std::string& date = "");
+    std::string Summary(const std::string& date = timestamp::GetCurrentDate());
 
     bool DeleteRecords();
 

@@ -1,4 +1,4 @@
-#include "time_utils.h"
+#include "timestamp.h"
 
 #include <ctime>
 
@@ -15,7 +15,7 @@ std::string GetCurrentTimestamp(const std::string& format)
 }
 }
 
-namespace time_utils
+namespace timestamp
 {
 std::string GetCurrentDate()
 {

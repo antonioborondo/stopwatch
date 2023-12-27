@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace time_utils
+namespace timestamp
 {
 std::string GetCurrentDate();
 std::string GetCurrentDateAndTime();
