@@ -24,3 +24,5 @@ private:
 
     std::string timestamp_;
 };
+
+bool operator==(const Record& lhs, const Record& rhs);

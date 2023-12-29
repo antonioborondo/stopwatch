@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <string>
+#include <vector>
 
 struct sqlite3;
 
@@ -28,6 +29,8 @@ public:
     bool AddRecord(const Record& record);
 
     Record GetLastRecord();
+
+    std::vector<Record> GetRecords(const std::string& date = timestamp::GetCurrentDate()) const;
 
 private:
     std::string GetTime(double time_in_days);

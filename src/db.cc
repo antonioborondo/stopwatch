@@ -1,11 +1,14 @@
 #include "db.h"
 
+#include "record.h"
+
 #include <fmt/format.h>
 
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sqlite3.h>
+#include <vector>
 
 Db::Db()
 {
@@ -231,6 +234,59 @@ Record Db::GetLastRecord()
     sqlite3_finalize(stmt);
 
     return Record{static_cast<Record::Type>(type), timestamp};
+}
+
+std::vector<Record> Db::GetRecords(const std::string& date) const
+{
+    std::vector<Record> records;
+
+    const std::string sql_format_string{R"(
+        SELECT
+            type,
+            timestamp
+        FROM
+            records
+        WHERE
+            date(timestamp) = '{0}'
+    )"};
+
+    const auto sql{fmt::format(sql_format_string, date)};
+
+    sqlite3_stmt* stmt{nullptr};
+
+    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
+
+    int type;
+    std::string timestamp;
+
+    int idx = 0;
+
+    while(1)
+    {
+        retval = sqlite3_step(stmt);
+
+        if(retval == SQLITE_ROW)
+        {
+            type = sqlite3_column_int(stmt, 0);
+            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+
+            records.push_back(Record{static_cast<Record::Type>(type), timestamp});
+        }
+        else if(retval == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            printf("Some error encountered\n");
+            break;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+
+    return records;
 }
 
 std::string Db::GetTime(double time_in_days)
