@@ -27,4 +27,4 @@ private:
 
 bool operator==(const Record& lhs, const Record& rhs);
 
-std::ostream& operator<<(std::ostream& os, const Record::Type& type);
+bool operator!=(const Record& lhs, const Record& rhs);
