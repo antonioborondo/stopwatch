@@ -40,14 +40,17 @@ int main(int argc, char** argv)
         }
         else if(variables_map.count("summary"))
         {
-            std::cout << "Records:" << std::endl;
+            std::cout << "+-------+---------------------+\n";
+            std::cout << "| Type  | Timestamp           |\n";
+            std::cout << "+-------+---------------------+\n";
             auto records{db.GetRecords()};
-            for(auto record: records)
+            for(const auto& record: records)
             {
-                std::cout << static_cast<int>(record.GetType()) << " " << record.GetTimestamp() << std::endl;
+                std::cout << "| " << record.GetType() << " | " << record.GetTimestamp() << " |\n";
             }
-            std::cout << std::endl
-                      << "Total: " << db.Summary() << std::endl;
+            std::cout << "+-------+---------------------+\n";
+
+            std::cout << "\nTotal time: " << db.Summary() << "\n";
         }
         else if(variables_map.count("version"))
         {

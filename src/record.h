@@ -2,6 +2,7 @@
 
 #include "timestamp.h"
 
+#include <ostream>
 #include <string>
 
 class Record
@@ -26,3 +27,5 @@ private:
 };
 
 bool operator==(const Record& lhs, const Record& rhs);
+
+std::ostream& operator<<(std::ostream& os, const Record::Type& type);
