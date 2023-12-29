@@ -50,7 +50,7 @@ int main(int argc, char** argv)
             }
             std::cout << "+-------+---------------------+\n";
 
-            std::cout << "\nTotal time: " << db.Summary() << "\n";
+            std::cout << "\nTotal time: " << db.Summary(Timestamp::GetCurrent()) << "\n";
         }
         else if(variables_map.count("version"))
         {

@@ -31,9 +31,9 @@ Db::~Db()
     sqlite3_close(db_);
 }
 
-std::string Db::Summary(const std::string& date)
+std::string Db::Summary(const Timestamp& timestamp)
 {
-    const auto last_record{GetLastRecord()};
+    const auto last_record{GetLastRecord(timestamp)};
     if(last_record.GetType() == Record::Type::kStart)
     {
         AddRecord(Record{Record::Type::kStop, Timestamp::GetCurrent()});
@@ -74,7 +74,7 @@ std::string Db::Summary(const std::string& date)
         )
     )"};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -204,7 +204,7 @@ bool Db::AddRecord(const Record& record)
     return true;
 }
 
-Record Db::GetLastRecord(const std::string& date)
+Record Db::GetLastRecord(const Timestamp& timestamp)
 {
     const std::string sql_format_string{R"(
         SELECT
@@ -220,14 +220,14 @@ Record Db::GetLastRecord(const std::string& date)
         LIMIT 1
     )"};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
     sqlite3_stmt* stmt{nullptr};
 
     int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
 
     int type;
-    std::string timestamp;
+    std::string timestamp2;
 
     int idx = 0;
 
@@ -238,7 +238,7 @@ Record Db::GetLastRecord(const std::string& date)
         if(retval == SQLITE_ROW)
         {
             type = sqlite3_column_int(stmt, 0);
-            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            timestamp2 = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
         }
         else if(retval == SQLITE_DONE)
         {
@@ -254,7 +254,7 @@ Record Db::GetLastRecord(const std::string& date)
 
     sqlite3_finalize(stmt);
 
-    return Record{static_cast<Record::Type>(type), timestamp};
+    return Record{static_cast<Record::Type>(type), Timestamp{timestamp2}};
 }
 
 std::vector<Record> Db::GetRecords(const std::string& date) const

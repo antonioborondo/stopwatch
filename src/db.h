@@ -22,13 +22,13 @@ public:
 
     void DeleteLast();
 
-    std::string Summary(const std::string& date = Timestamp::GetCurrent().GetDate());
+    std::string Summary(const Timestamp& timestamp);
 
     bool DeleteRecords();
 
     bool AddRecord(const Record& record);
 
-    Record GetLastRecord(const std::string& date = Timestamp::GetCurrent().GetDate());
+    Record GetLastRecord(const Timestamp& timestamp);
 
     std::vector<Record> GetRecords(const std::string& date = Timestamp::GetCurrent().GetDate()) const;
 
