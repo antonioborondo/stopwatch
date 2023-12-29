@@ -45,6 +45,14 @@ TEST_F(DbTest, AddNewRecordFailsWhenLastOneIsFromSameType)
     ASSERT_FALSE(db_.AddRecord(record_2));
 }
 
+TEST_F(DbTest, AddNewRecordSucceedsWhenLastOneIsFromSameTypeButFromDifferentDay)
+{
+    const Record record_1{Record::Type::kStart, "0001-01-01 01:01:01"};
+    ASSERT_TRUE(db_.AddRecord(record_1));
+    const Record record_2{Record::Type::kStart, "0001-01-02 01:01:01"};
+    ASSERT_TRUE(db_.AddRecord(record_2));
+}
+
 TEST_F(DbTest, GetSummary)
 {
     const Record record_1{Record::Type::kStart, "2023-10-23 09:00:00"};
