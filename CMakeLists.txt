@@ -44,6 +44,7 @@ find_package(GTest REQUIRED)
 
 target_link_libraries(time_tracker_test
     PRIVATE
+    GTest::gmock
     GTest::gtest_main
     time_tracker_common
 )
