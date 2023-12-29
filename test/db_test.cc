@@ -86,7 +86,7 @@ TEST_F(DbTest, GetRecords)
     Record record_3{Record::Type::kStop, Timestamp("2023-10-23 00:00:03")};
     ASSERT_TRUE(db_.AddRecord(record_3));
 
-    //std::vector<Record> records{db_.GetRecords("2023-10-23")};
+    std::vector<Record> records{db_.GetRecords(Timestamp("2023-10-23 00:00:00"))};
 
-    //ASSERT_THAT(records, testing::ElementsAre(record_0, record_1, record_2, record_3));
+    ASSERT_THAT(records, testing::ElementsAre(record_0, record_1, record_2, record_3));
 }
