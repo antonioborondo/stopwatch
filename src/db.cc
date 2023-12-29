@@ -181,6 +181,12 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
+    const auto last_record{GetLastRecord()};
+    if(record.GetType() == last_record.GetType())
+    {
+        return false;
+    }
+
     const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
     const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
 
