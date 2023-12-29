@@ -261,7 +261,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
 
 std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
 {
-        std::vector<Record> records;
+    std::vector<Record> records;
 
     const std::string sql_format_string{R"(
         SELECT
