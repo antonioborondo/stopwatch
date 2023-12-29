@@ -181,6 +181,13 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
+    const auto date{timestamp::GetDate(record.GetTimestamp())};
+    const auto last_record{GetLastRecord(date)};
+    if(record.GetType() == last_record.GetType())
+    {
+        return false;
+    }
+
     const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
     const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
 
@@ -197,9 +204,23 @@ bool Db::AddRecord(const Record& record)
     return true;
 }
 
-Record Db::GetLastRecord()
+Record Db::GetLastRecord(const std::string& date)
 {
-    std::string sql{"SELECT type, timestamp FROM records ORDER BY timestamp DESC LIMIT 1"};
+    const std::string sql_format_string{R"(
+        SELECT
+            type,
+            timestamp
+        FROM
+            records
+        WHERE
+            date(timestamp) = '{}'
+        ORDER BY
+            timestamp
+            DESC
+        LIMIT 1
+    )"};
+
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* stmt{nullptr};
 
