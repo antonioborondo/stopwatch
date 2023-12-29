@@ -1,6 +1,7 @@
 #include "timestamp.h"
 
 #include <ctime>
+#include <regex>
 
 namespace
 {
@@ -25,5 +26,13 @@ std::string GetCurrentDate()
 std::string GetCurrentDateAndTime()
 {
     return GetCurrentTimestamp("%F %T"); // yyyy-mm-dd hh:mm:ss
+}
+
+std::string GetDate(const std::string& timestamp)
+{
+    const std::regex regex{R"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}))"};
+    std::smatch regex_match_result;
+    std::regex_search(timestamp, regex_match_result, regex);
+    return regex_match_result[1];
 }
 }

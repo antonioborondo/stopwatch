@@ -28,7 +28,7 @@ public:
 
     bool AddRecord(const Record& record);
 
-    Record GetLastRecord();
+    Record GetLastRecord(const std::string& date = timestamp::GetCurrentDate());
 
     std::vector<Record> GetRecords(const std::string& date = timestamp::GetCurrentDate()) const;
 
