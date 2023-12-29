@@ -22,7 +22,7 @@ public:
 
     void DeleteLast();
 
-    std::string Summary(const Timestamp& timestamp);
+    std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
 
     bool DeleteRecords();
 

@@ -1,6 +1,7 @@
 #include "timestamp.h"
 
 #include <ctime>
+#include <ostream>
 #include <regex>
 
 Timestamp::Timestamp(const std::string& timestamp):
@@ -66,4 +67,10 @@ bool operator==(const Timestamp& lhs, const Timestamp& rhs)
 bool operator!=(const Timestamp& lhs, const Timestamp& rhs)
 {
     return !(lhs == rhs);
+}
+
+std::ostream& operator<<(std::ostream& os, const Timestamp& timestamp)
+{
+    os << timestamp.Get();
+    return os;
 }

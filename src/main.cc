@@ -46,15 +46,15 @@ int main(int argc, char** argv)
         Db db;
         if(variables_map.count("start"))
         {
-            const Record record{Record::Type::kStart, Timestamp::GetCurrent()};
+            const Record record{Record::Type::kStart};
             db.AddRecord(record);
-            std::cout << record.GetTimestamp().Get() << std::endl;
+            std::cout << record.GetTimestamp() << std::endl;
         }
         else if(variables_map.count("stop"))
         {
-            const Record record{Record::Type::kStop, Timestamp::GetCurrent()};
+            const Record record{Record::Type::kStop};
             db.AddRecord(record);
-            std::cout << record.GetTimestamp().Get() << std::endl;
+            std::cout << record.GetTimestamp() << std::endl;
         }
         else if(variables_map.count("summary"))
         {
@@ -64,11 +64,11 @@ int main(int argc, char** argv)
             auto records{db.GetRecords()};
             for(const auto& record: records)
             {
-                std::cout << "| " << record.GetType() << " | " << record.GetTimestamp().Get() << " |\n";
+                std::cout << "| " << record.GetType() << " | " << record.GetTimestamp() << " |\n";
             }
             std::cout << "+-------+---------------------+\n";
 
-            std::cout << "\nTotal time: " << db.Summary(Timestamp::GetCurrent()) << "\n";
+            std::cout << "\nTotal time: " << db.Summary() << "\n";
         }
         else if(variables_map.count("version"))
         {

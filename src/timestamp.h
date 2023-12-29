@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include <string>
 
 class Timestamp
@@ -24,3 +25,5 @@ private:
 bool operator==(const Timestamp& lhs, const Timestamp& rhs);
 
 bool operator!=(const Timestamp& lhs, const Timestamp& rhs);
+
+std::ostream& operator<<(std::ostream& os, const Timestamp& timestamp);

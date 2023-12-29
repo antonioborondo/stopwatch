@@ -13,7 +13,7 @@ public:
         kStart,
     };
 
-    Record(Type type, const Timestamp& timestamp);
+    Record(Type type, const Timestamp& timestamp = Timestamp::GetCurrent());
 
     Type GetType() const;
 

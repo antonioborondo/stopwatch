@@ -2,6 +2,9 @@
 
 #include <gtest/gtest.h>
 
+#include <sstream>
+#include <string>
+
 TEST(TimestampTest, Valid)
 {
     ASSERT_NO_THROW(Timestamp::GetCurrent());
@@ -44,4 +47,13 @@ TEST(TimestampTest, NotEqual)
     const Timestamp timestamp_1{"0001-01-01 01:01:01"};
     const Timestamp timestamp_2{"0001-01-01 01:01:02"};
     ASSERT_NE(timestamp_1, timestamp_2);
+}
+
+TEST(TimestampTest, Sink)
+{
+    const std::string timestamp_string{"0001-01-01 01:01:01"};
+    const Timestamp timestamp{timestamp_string};
+    std::ostringstream sink;
+    sink << timestamp;
+    ASSERT_EQ(timestamp_string, sink.str());
 }
