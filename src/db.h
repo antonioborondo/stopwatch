@@ -30,7 +30,7 @@ public:
 
     Record GetLastRecord(const Timestamp& timestamp);
 
-    std::vector<Record> GetRecords(const std::string& date = Timestamp::GetCurrent().GetDate()) const;
+    std::vector<Record> GetRecords(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
 
 private:
     std::string GetTime(double time_in_days);

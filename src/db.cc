@@ -181,11 +181,13 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto date{record.GetTimestamp().GetDate()};
-    const auto last_record{GetLastRecord(date)};
-    if(record.GetType() == last_record.GetType())
+    const auto records{GetRecords(record.GetTimestamp())};
+    if(!records.empty())
     {
-        return false;
+        if(records.back().GetType() ==record.GetType())
+        {
+            return false;
+        }
     }
 
     const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
@@ -257,7 +259,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
     return Record{static_cast<Record::Type>(type), Timestamp{timestamp2}};
 }
 
-std::vector<Record> Db::GetRecords(const std::string& date) const
+std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
 {
     std::vector<Record> records;
 
@@ -271,14 +273,11 @@ std::vector<Record> Db::GetRecords(const std::string& date) const
             date(timestamp) = '{0}'
     )"};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
     sqlite3_stmt* stmt{nullptr};
 
     int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
-
-    int type;
-    std::string timestamp;
 
     int idx = 0;
 
@@ -288,10 +287,10 @@ std::vector<Record> Db::GetRecords(const std::string& date) const
 
         if(retval == SQLITE_ROW)
         {
-            type = sqlite3_column_int(stmt, 0);
-            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            auto tmp_type = sqlite3_column_int(stmt, 0);
+            auto tmp_timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
 
-            records.push_back(Record{static_cast<Record::Type>(type), timestamp});
+            records.push_back(Record{static_cast<Record::Type>(tmp_type), Timestamp{tmp_timestamp}});
         }
         else if(retval == SQLITE_DONE)
         {
