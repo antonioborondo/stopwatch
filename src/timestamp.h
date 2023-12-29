@@ -21,9 +21,6 @@ private:
     std::string timestamp_;
 };
 
-namespace timestamp
-{
-std::string GetCurrentDate();
-std::string GetCurrentDateAndTime();
-std::string GetDate(const std::string& timestamp);
-}
+bool operator==(const Timestamp& lhs, const Timestamp& rhs);
+
+bool operator!=(const Timestamp& lhs, const Timestamp& rhs);

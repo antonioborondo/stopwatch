@@ -31,3 +31,17 @@ TEST(TimestampTest, GetTime)
     const Timestamp timestamp{"0001-01-01 01:01:01"};
     ASSERT_EQ("01:01:01", timestamp.GetTime());
 }
+
+TEST(TimestampTest, Equal)
+{
+    const Timestamp timestamp_1{"0001-01-01 01:01:01"};
+    const Timestamp timestamp_2{"0001-01-01 01:01:01"};
+    ASSERT_EQ(timestamp_1, timestamp_2);
+}
+
+TEST(TimestampTest, NotEqual)
+{
+    const Timestamp timestamp_1{"0001-01-01 01:01:01"};
+    const Timestamp timestamp_2{"0001-01-01 01:01:02"};
+    ASSERT_NE(timestamp_1, timestamp_2);
+}

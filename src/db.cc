@@ -36,7 +36,7 @@ std::string Db::Summary(const std::string& date)
     const auto last_record{GetLastRecord()};
     if(last_record.GetType() == Record::Type::kStart)
     {
-        AddRecord(Record{Record::Type::kStop});
+        AddRecord(Record{Record::Type::kStop, Timestamp::GetCurrent()});
     }
 
     const auto sql_format_string{R"(
@@ -181,7 +181,7 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto date{timestamp::GetDate(record.GetTimestamp())};
+    const auto date{record.GetTimestamp().GetDate()};
     const auto last_record{GetLastRecord(date)};
     if(record.GetType() == last_record.GetType())
     {
@@ -189,7 +189,7 @@ bool Db::AddRecord(const Record& record)
     }
 
     const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
-    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().Get())};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};

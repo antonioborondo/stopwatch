@@ -3,7 +3,6 @@
 #include "timestamp.h"
 
 #include <ostream>
-#include <string>
 
 class Record
 {
@@ -14,16 +13,16 @@ public:
         kStart,
     };
 
-    Record(Type type, const std::string& timestamp = timestamp::GetCurrentDateAndTime());
+    Record(Type type, const Timestamp& timestamp);
 
     Type GetType() const;
 
-    std::string GetTimestamp() const;
+    Timestamp GetTimestamp() const;
 
 private:
     Type type_;
 
-    std::string timestamp_;
+    Timestamp timestamp_;
 };
 
 bool operator==(const Record& lhs, const Record& rhs);

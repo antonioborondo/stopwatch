@@ -22,15 +22,15 @@ public:
 
     void DeleteLast();
 
-    std::string Summary(const std::string& date = timestamp::GetCurrentDate());
+    std::string Summary(const std::string& date = Timestamp::GetCurrent().GetDate());
 
     bool DeleteRecords();
 
     bool AddRecord(const Record& record);
 
-    Record GetLastRecord(const std::string& date = timestamp::GetCurrentDate());
+    Record GetLastRecord(const std::string& date = Timestamp::GetCurrent().GetDate());
 
-    std::vector<Record> GetRecords(const std::string& date = timestamp::GetCurrentDate()) const;
+    std::vector<Record> GetRecords(const std::string& date = Timestamp::GetCurrent().GetDate()) const;
 
 private:
     std::string GetTime(double time_in_days);

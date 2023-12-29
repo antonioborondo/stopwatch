@@ -2,7 +2,7 @@
 
 #include <ostream>
 
-Record::Record(Record::Type type, const std::string& timestamp):
+Record::Record(Record::Type type, const Timestamp& timestamp):
     type_{type},
     timestamp_{timestamp}
 {
@@ -13,7 +13,7 @@ Record::Type Record::GetType() const
     return type_;
 }
 
-std::string Record::GetTimestamp() const
+Timestamp Record::GetTimestamp() const
 {
     return timestamp_;
 }
