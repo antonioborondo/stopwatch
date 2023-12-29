@@ -42,11 +42,12 @@ int main(int argc, char** argv)
         {
             std::cout << "Records:" << std::endl;
             auto records{db.GetRecords()};
-            for(auto record : records)
+            for(auto record: records)
             {
                 std::cout << static_cast<int>(record.GetType()) << " " << record.GetTimestamp() << std::endl;
             }
-            std::cout << std::endl << "Total: " << db.Summary() << std::endl;
+            std::cout << std::endl
+                      << "Total: " << db.Summary() << std::endl;
         }
         else if(variables_map.count("version"))
         {
