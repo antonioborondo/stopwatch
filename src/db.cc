@@ -184,7 +184,7 @@ bool Db::AddRecord(const Record& record)
     const auto records{GetRecords(record.GetTimestamp())};
     if(!records.empty())
     {
-        if(records.back().GetType() ==record.GetType())
+        if(records.back().GetType() == record.GetType())
         {
             return false;
         }
@@ -261,7 +261,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
 
 std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
 {
-    std::vector<Record> records;
+        std::vector<Record> records;
 
     const std::string sql_format_string{R"(
         SELECT
@@ -272,39 +272,33 @@ std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
         WHERE
             date(timestamp) = '{0}'
     )"};
-
     const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
-    sqlite3_stmt* stmt{nullptr};
+    sqlite3_stmt* statement{nullptr};
+    int result_code{sqlite3_prepare_v2(db_, sql.c_str(), -1, &statement, nullptr)};
 
-    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
-
-    int idx = 0;
-
-    while(1)
+    while(true)
     {
-        retval = sqlite3_step(stmt);
-
-        if(retval == SQLITE_ROW)
+        result_code = sqlite3_step(statement);
+        if(result_code == SQLITE_ROW)
         {
-            auto tmp_type = sqlite3_column_int(stmt, 0);
-            auto tmp_timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-
-            records.push_back(Record{static_cast<Record::Type>(tmp_type), Timestamp{tmp_timestamp}});
+            const auto result_type{static_cast<Record::Type>(sqlite3_column_int(statement, 0))};
+            const auto result_timestamp{reinterpret_cast<const char*>(sqlite3_column_text(statement, 1))};
+            records.emplace_back(result_type, Timestamp{result_timestamp});
         }
-        else if(retval == SQLITE_DONE)
+        else if(result_code == SQLITE_DONE)
         {
             break;
         }
         else
         {
-            sqlite3_finalize(stmt);
+            sqlite3_finalize(statement);
             printf("Some error encountered\n");
             break;
         }
     }
 
-    sqlite3_finalize(stmt);
+    sqlite3_finalize(statement);
 
     return records;
 }
