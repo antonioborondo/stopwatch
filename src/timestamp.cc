@@ -21,7 +21,10 @@ std::string Timestamp::GetDate() const
 {
     const std::regex regex{R"((\d{4}-\d{2}-\d{2}) \d{2}:\d{2}:\d{2})"};
     std::smatch regex_match_result;
-    std::regex_match(timestamp_, regex_match_result, regex);
+    if(!std::regex_match(timestamp_, regex_match_result, regex))
+    {
+        throw std::runtime_error("Cannot get date");
+    }
     return regex_match_result[1];
 }
 
@@ -29,7 +32,10 @@ std::string Timestamp::GetTime() const
 {
     const std::regex regex{R"(\d{4}-\d{2}-\d{2} (\d{2}:\d{2}:\d{2}))"};
     std::smatch regex_match_result;
-    std::regex_match(timestamp_, regex_match_result, regex);
+    if(!std::regex_match(timestamp_, regex_match_result, regex))
+    {
+        throw std::runtime_error("Cannot get time");
+    }
     return regex_match_result[1];
 }
 
@@ -38,8 +44,10 @@ Timestamp Timestamp::GetCurrent()
     const std::time_t time{std::time(nullptr)};
     const size_t timestamp_size{32};
     char timestamp[timestamp_size];
-    std::strftime(std::data(timestamp), std::size(timestamp), "%F %T", localtime(&time));
-
+    if(std::strftime(timestamp, timestamp_size, "%F %T", localtime(&time)) == 0)
+    {
+        throw std::runtime_error("Cannot get current");
+    }
     return Timestamp(timestamp);
 }
 
