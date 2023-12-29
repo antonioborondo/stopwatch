@@ -7,6 +7,24 @@
 
 namespace po = boost::program_options;
 
+std::ostream& operator<<(std::ostream& os, const Record::Type& type)
+{
+    switch(type)
+    {
+        case Record::Type::kStop:
+        {
+            os << "Stop ";
+            break;
+        }
+        default:
+        {
+            os << "Start";
+            break;
+        }
+    }
+    return os;
+}
+
 int main(int argc, char** argv)
 {
     try

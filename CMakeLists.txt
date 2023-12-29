@@ -38,6 +38,8 @@ target_link_libraries(time_tracker
 
 add_executable(time_tracker_test
     test/db_test.cc
+    test/record_test.cc
+    test/timestamp_test.cc
 )
 
 find_package(GTest REQUIRED)

@@ -1,10 +1,29 @@
 #pragma once
 
+#include <ostream>
 #include <string>
 
-namespace timestamp
+class Timestamp
 {
-std::string GetCurrentDate();
-std::string GetCurrentDateAndTime();
-std::string GetDate(const std::string& timestamp);
-}
+public:
+    Timestamp(const std::string& timestamp);
+
+    std::string Get() const;
+
+    std::string GetDate() const;
+
+    std::string GetTime() const;
+
+    static Timestamp GetCurrent();
+
+private:
+    bool IsValid() const;
+
+    std::string timestamp_;
+};
+
+bool operator==(const Timestamp& lhs, const Timestamp& rhs);
+
+bool operator!=(const Timestamp& lhs, const Timestamp& rhs);
+
+std::ostream& operator<<(std::ostream& os, const Timestamp& timestamp);

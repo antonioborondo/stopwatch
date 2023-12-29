@@ -1,8 +1,10 @@
 #include "record.h"
 
+#include "timestamp.h"
+
 #include <ostream>
 
-Record::Record(Record::Type type, const std::string& timestamp):
+Record::Record(Record::Type type, const Timestamp& timestamp):
     type_{type},
     timestamp_{timestamp}
 {
@@ -13,7 +15,7 @@ Record::Type Record::GetType() const
     return type_;
 }
 
-std::string Record::GetTimestamp() const
+Timestamp Record::GetTimestamp() const
 {
     return timestamp_;
 }
@@ -23,20 +25,7 @@ bool operator==(const Record& lhs, const Record& rhs)
     return (lhs.GetType() == rhs.GetType()) && (lhs.GetTimestamp() == rhs.GetTimestamp());
 }
 
-std::ostream& operator<<(std::ostream& os, const Record::Type& type)
+bool operator!=(const Record& lhs, const Record& rhs)
 {
-    switch(type)
-    {
-        case Record::Type::kStop:
-        {
-            os << "Stop ";
-            break;
-        }
-        default:
-        {
-            os << "Start";
-            break;
-        }
-    }
-    return os;
+    return !(lhs == rhs);
 }

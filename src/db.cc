@@ -31,12 +31,12 @@ Db::~Db()
     sqlite3_close(db_);
 }
 
-std::string Db::Summary(const std::string& date)
+std::string Db::Summary(const Timestamp& timestamp)
 {
-    const auto last_record{GetLastRecord()};
+    const auto last_record{GetLastRecord(timestamp)};
     if(last_record.GetType() == Record::Type::kStart)
     {
-        AddRecord(Record{Record::Type::kStop});
+        AddRecord(Record{Record::Type::kStop, Timestamp::GetCurrent()});
     }
 
     const auto sql_format_string{R"(
@@ -74,7 +74,7 @@ std::string Db::Summary(const std::string& date)
         )
     )"};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -181,15 +181,17 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto date{timestamp::GetDate(record.GetTimestamp())};
-    const auto last_record{GetLastRecord(date)};
-    if(record.GetType() == last_record.GetType())
+    const auto records{GetRecords(record.GetTimestamp())};
+    if(!records.empty())
     {
-        return false;
+        if(records.back().GetType() == record.GetType())
+        {
+            return false;
+        }
     }
 
     const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
-    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp())};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().Get())};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
@@ -204,7 +206,7 @@ bool Db::AddRecord(const Record& record)
     return true;
 }
 
-Record Db::GetLastRecord(const std::string& date)
+Record Db::GetLastRecord(const Timestamp& timestamp)
 {
     const std::string sql_format_string{R"(
         SELECT
@@ -220,14 +222,14 @@ Record Db::GetLastRecord(const std::string& date)
         LIMIT 1
     )"};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
     sqlite3_stmt* stmt{nullptr};
 
     int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
 
     int type;
-    std::string timestamp;
+    std::string timestamp2;
 
     int idx = 0;
 
@@ -238,7 +240,7 @@ Record Db::GetLastRecord(const std::string& date)
         if(retval == SQLITE_ROW)
         {
             type = sqlite3_column_int(stmt, 0);
-            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            timestamp2 = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
         }
         else if(retval == SQLITE_DONE)
         {
@@ -254,10 +256,10 @@ Record Db::GetLastRecord(const std::string& date)
 
     sqlite3_finalize(stmt);
 
-    return Record{static_cast<Record::Type>(type), timestamp};
+    return Record{static_cast<Record::Type>(type), Timestamp{timestamp2}};
 }
 
-std::vector<Record> Db::GetRecords(const std::string& date) const
+std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
 {
     std::vector<Record> records;
 
@@ -270,42 +272,33 @@ std::vector<Record> Db::GetRecords(const std::string& date) const
         WHERE
             date(timestamp) = '{0}'
     )"};
+    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
 
-    const auto sql{fmt::format(sql_format_string, date)};
+    sqlite3_stmt* statement{nullptr};
+    int result_code{sqlite3_prepare_v2(db_, sql.c_str(), -1, &statement, nullptr)};
 
-    sqlite3_stmt* stmt{nullptr};
-
-    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
-
-    int type;
-    std::string timestamp;
-
-    int idx = 0;
-
-    while(1)
+    while(true)
     {
-        retval = sqlite3_step(stmt);
-
-        if(retval == SQLITE_ROW)
+        result_code = sqlite3_step(statement);
+        if(result_code == SQLITE_ROW)
         {
-            type = sqlite3_column_int(stmt, 0);
-            timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-
-            records.push_back(Record{static_cast<Record::Type>(type), timestamp});
+            const auto result_type{static_cast<Record::Type>(sqlite3_column_int(statement, 0))};
+            const auto result_timestamp{reinterpret_cast<const char*>(sqlite3_column_text(statement, 1))};
+            records.emplace_back(result_type, Timestamp{result_timestamp});
         }
-        else if(retval == SQLITE_DONE)
+        else if(result_code == SQLITE_DONE)
         {
             break;
         }
         else
         {
-            sqlite3_finalize(stmt);
+            sqlite3_finalize(statement);
             printf("Some error encountered\n");
             break;
         }
     }
 
-    sqlite3_finalize(stmt);
+    sqlite3_finalize(statement);
 
     return records;
 }
