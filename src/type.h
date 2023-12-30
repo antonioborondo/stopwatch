@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/ostream.h>
+
 #include <ostream>
 
 enum class Type
@@ -9,3 +11,7 @@ enum class Type
 };
 
 std::ostream& operator<<(std::ostream& os, const Type& type);
+
+template<>
+struct fmt::formatter<Type>: ostream_formatter
+{};

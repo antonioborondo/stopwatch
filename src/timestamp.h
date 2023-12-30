@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/ostream.h>
+
 #include <ostream>
 #include <string>
 
@@ -27,3 +29,7 @@ bool operator==(const Timestamp& lhs, const Timestamp& rhs);
 bool operator!=(const Timestamp& lhs, const Timestamp& rhs);
 
 std::ostream& operator<<(std::ostream& os, const Timestamp& timestamp);
+
+template<>
+struct fmt::formatter<Timestamp>: ostream_formatter
+{};
