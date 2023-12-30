@@ -1,13 +1,17 @@
 #include "db.h"
 
 #include "record.h"
+#include "timestamp.h"
+#include "type.h"
 
 #include <fmt/format.h>
 
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <sqlite3.h>
+#include <string>
 #include <vector>
 
 Db::Db()
@@ -34,9 +38,9 @@ Db::~Db()
 std::string Db::Summary(const Timestamp& timestamp)
 {
     const auto last_record{GetLastRecord(timestamp)};
-    if(last_record.GetType() == Record::Type::kStart)
+    if(last_record.GetType() == Type::kStart)
     {
-        AddRecord(Record{Record::Type::kStop, Timestamp::GetCurrent()});
+        AddRecord(Record{Type::kStop, Timestamp::GetCurrent()});
     }
 
     const auto sql_format_string{R"(
@@ -105,7 +109,7 @@ std::string Db::Summary(const Timestamp& timestamp)
 
     sqlite3_finalize(stmt);
 
-    if(last_record.GetType() == Record::Type::kStart)
+    if(last_record.GetType() == Type::kStart)
     {
         DeleteLast();
     }
@@ -256,7 +260,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
 
     sqlite3_finalize(stmt);
 
-    return Record{static_cast<Record::Type>(type), Timestamp{timestamp2}};
+    return Record{static_cast<Type>(type), Timestamp{timestamp2}};
 }
 
 std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
@@ -282,7 +286,7 @@ std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
         result_code = sqlite3_step(statement);
         if(result_code == SQLITE_ROW)
         {
-            const auto result_type{static_cast<Record::Type>(sqlite3_column_int(statement, 0))};
+            const auto result_type{static_cast<Type>(sqlite3_column_int(statement, 0))};
             const auto result_timestamp{reinterpret_cast<const char*>(sqlite3_column_text(statement, 1))};
             records.emplace_back(result_type, Timestamp{result_timestamp});
         }

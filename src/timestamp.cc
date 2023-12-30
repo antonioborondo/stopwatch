@@ -3,6 +3,7 @@
 #include <ctime>
 #include <ostream>
 #include <regex>
+#include <string>
 
 Timestamp::Timestamp(const std::string& timestamp):
     timestamp_{timestamp}

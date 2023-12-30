@@ -8,6 +8,7 @@ add_library(time_tracker_common STATIC
     src/db.cc
     src/record.cc
     src/timestamp.cc
+    src/type.cc
 )
 
 target_include_directories(time_tracker_common
@@ -40,6 +41,7 @@ add_executable(time_tracker_test
     test/db_test.cc
     test/record_test.cc
     test/timestamp_test.cc
+    test/type_test.cc
 )
 
 find_package(GTest REQUIRED)
