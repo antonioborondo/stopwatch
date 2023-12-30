@@ -1,18 +1,11 @@
 #pragma once
 
 #include "timestamp.h"
-
-#include <ostream>
+#include "type.h"
 
 class Record
 {
 public:
-    enum class Type
-    {
-        kStop = 0,
-        kStart,
-    };
-
     Record(Type type, const Timestamp& timestamp = Timestamp::GetCurrent());
 
     Type GetType() const;

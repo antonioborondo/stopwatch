@@ -1,29 +1,12 @@
 #include "db.h"
 #include "record.h"
+#include "type.h"
 
 #include <boost/program_options.hpp>
 
 #include <iostream>
 
 namespace po = boost::program_options;
-
-std::ostream& operator<<(std::ostream& os, const Record::Type& type)
-{
-    switch(type)
-    {
-        case Record::Type::kStop:
-        {
-            os << "Stop ";
-            break;
-        }
-        default:
-        {
-            os << "Start";
-            break;
-        }
-    }
-    return os;
-}
 
 int main(int argc, char** argv)
 {
@@ -46,13 +29,13 @@ int main(int argc, char** argv)
         Db db;
         if(variables_map.count("start"))
         {
-            const Record record{Record::Type::kStart};
+            const Record record{Type::kStart};
             db.AddRecord(record);
             std::cout << record.GetTimestamp() << std::endl;
         }
         else if(variables_map.count("stop"))
         {
-            const Record record{Record::Type::kStop};
+            const Record record{Type::kStop};
             db.AddRecord(record);
             std::cout << record.GetTimestamp() << std::endl;
         }

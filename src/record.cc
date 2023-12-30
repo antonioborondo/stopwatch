@@ -2,15 +2,13 @@
 
 #include "timestamp.h"
 
-#include <ostream>
-
-Record::Record(Record::Type type, const Timestamp& timestamp):
+Record::Record(Type type, const Timestamp& timestamp):
     type_{type},
     timestamp_{timestamp}
 {
 }
 
-Record::Type Record::GetType() const
+Type Record::GetType() const
 {
     return type_;
 }
