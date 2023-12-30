@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(time_tracker_common STATIC
     src/db.cc
+    src/printer.cc
     src/record.cc
     src/timestamp.cc
     src/type.cc
@@ -21,8 +22,9 @@ find_package(SQLite3 REQUIRED)
 
 target_link_libraries(time_tracker_common
     PRIVATE
-    fmt::fmt
     SQLite::SQLite3
+    PUBLIC
+    fmt::fmt
 )
 
 add_executable(time_tracker
@@ -39,6 +41,7 @@ target_link_libraries(time_tracker
 
 add_executable(time_tracker_test
     test/db_test.cc
+    test/printer_test.cc
     test/record_test.cc
     test/timestamp_test.cc
     test/type_test.cc

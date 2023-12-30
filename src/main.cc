@@ -1,4 +1,5 @@
 #include "db.h"
+#include "printer.h"
 #include "record.h"
 #include "type.h"
 
@@ -27,6 +28,7 @@ int main(int argc, char** argv)
         po::store(po::parse_command_line(argc, argv, options_description), variables_map);
 
         Db db;
+        Printer printer;
         if(variables_map.count("start"))
         {
             const Record record{Type::kStart};
@@ -41,15 +43,7 @@ int main(int argc, char** argv)
         }
         else if(variables_map.count("summary"))
         {
-            std::cout << "+-------+---------------------+\n";
-            std::cout << "| Type  | Timestamp           |\n";
-            std::cout << "+-------+---------------------+\n";
-            auto records{db.GetRecords()};
-            for(const auto& record: records)
-            {
-                std::cout << "| " << record.GetType() << " | " << record.GetTimestamp() << " |\n";
-            }
-            std::cout << "+-------+---------------------+\n";
+            printer.PrintRecords(db.GetRecords());
 
             std::cout << "\nTotal time: " << db.Summary() << "\n";
         }
