@@ -1,3 +1,4 @@
+#include "date.h"
 #include "db.h"
 #include "record.h"
 #include "type.h"
@@ -22,7 +23,7 @@ TEST_F(DbTest, AddRecord)
     const Record record{Type::kStart, timestamp};
     ASSERT_TRUE(db_.AddRecord(record));
 
-    Record last_record{db_.GetLastRecord(timestamp)};
+    Record last_record{db_.GetLastRecord(Date{timestamp.GetDate()})};
     ASSERT_EQ(record.GetType(), last_record.GetType());
     ASSERT_EQ(record.GetTimestamp(), last_record.GetTimestamp());
 }
@@ -32,7 +33,7 @@ TEST_F(DbTest, AddRecordWithTimestamp)
     const Record record{Type::kStart, Timestamp("0001-01-01 01:01:01")};
     ASSERT_TRUE(db_.AddRecord(record));
 
-    const Record last_record{db_.GetLastRecord(Timestamp("0001-01-01 01:01:01"))};
+    const Record last_record{db_.GetLastRecord(Date("0001-01-01"))};
     ASSERT_EQ(record.GetType(), last_record.GetType());
     ASSERT_EQ(record.GetTimestamp(), last_record.GetTimestamp());
 }
@@ -87,7 +88,7 @@ TEST_F(DbTest, GetRecordsByDate)
     Record record_3{Type::kStop, Timestamp("2023-10-23 00:00:03")};
     ASSERT_TRUE(db_.AddRecord(record_3));
 
-    std::vector<Record> records{db_.GetRecordsByDate(Timestamp("2023-10-23 00:00:00"))};
+    std::vector<Record> records{db_.GetRecordsByDate(Date("2023-10-23"))};
 
     ASSERT_THAT(records, testing::ElementsAre(record_0, record_1, record_2, record_3));
 }

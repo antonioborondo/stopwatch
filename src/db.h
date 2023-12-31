@@ -1,5 +1,6 @@
 #pragma once
 
+#include "date.h"
 #include "record.h"
 #include "timestamp.h"
 
@@ -26,9 +27,9 @@ public:
 
     bool AddRecord(const Record& record);
 
-    Record GetLastRecord(const Timestamp& timestamp);
+    const Record GetLastRecord(const Date& date);
 
-    std::vector<Record> GetRecordsByDate(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
+    const std::vector<Record> GetRecordsByDate(const Date& date) const;
 
 private:
     std::string GetTime(double time_in_days);

@@ -41,7 +41,7 @@ Db::~Db()
 
 std::string Db::Summary(const Timestamp& timestamp)
 {
-    const auto last_record{GetLastRecord(timestamp)};
+    const auto last_record{GetLastRecord(Date{timestamp.GetDate()})};
     if(last_record.GetType() == Type::kStart)
     {
         AddRecord(Record{Type::kStop, Timestamp::GetCurrent()});
@@ -153,7 +153,7 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto records{GetRecordsByDate(record.GetTimestamp())};
+    const auto records{GetRecordsByDate(Date{record.GetTimestamp().GetDate()})};
     if(!records.empty())
     {
         if(records.back().GetType() == record.GetType())
@@ -178,7 +178,7 @@ bool Db::AddRecord(const Record& record)
     return true;
 }
 
-Record Db::GetLastRecord(const Timestamp& timestamp)
+const Record Db::GetLastRecord(const Date& date)
 {
     const std::string sql_format_string{R"(
         SELECT
@@ -193,8 +193,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
             DESC
         LIMIT 1
     )"};
-
-    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -231,7 +230,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
     return Record{static_cast<Type>(type), Timestamp{timestamp2}};
 }
 
-std::vector<Record> Db::GetRecordsByDate(const Timestamp& timestamp) const
+const std::vector<Record> Db::GetRecordsByDate(const Date& date) const
 {
     std::vector<Record> records;
 
@@ -244,7 +243,7 @@ std::vector<Record> Db::GetRecordsByDate(const Timestamp& timestamp) const
         WHERE
             date(timestamp) = '{0}'
     )"};
-    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* statement{nullptr};
     int result_code{sqlite3_prepare_v2(db_, sql.c_str(), -1, &statement, nullptr)};
