@@ -43,7 +43,7 @@ int main(int argc, char** argv)
         }
         else if(variables_map.count("summary"))
         {
-            printer.PrintRecords(db.GetRecords());
+            printer.PrintRecords(db.GetRecordsByDate());
 
             std::cout << "\nTotal time: " << db.Summary() << "\n";
         }

@@ -28,7 +28,7 @@ public:
 
     Record GetLastRecord(const Timestamp& timestamp);
 
-    std::vector<Record> GetRecords(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
+    std::vector<Record> GetRecordsByDate(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
 
 private:
     std::string GetTime(double time_in_days);

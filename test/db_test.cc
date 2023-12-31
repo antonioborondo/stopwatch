@@ -76,7 +76,7 @@ TEST_F(DbTest, GetSummaryWithPreviousDays)
     ASSERT_EQ("01:00:00", db_.Summary(Timestamp("2023-10-23 09:00:00")));
 }
 
-TEST_F(DbTest, GetRecords)
+TEST_F(DbTest, GetRecordsByDate)
 {
     Record record_0{Type::kStart, Timestamp("2023-10-23 00:00:00")};
     ASSERT_TRUE(db_.AddRecord(record_0));
@@ -87,7 +87,7 @@ TEST_F(DbTest, GetRecords)
     Record record_3{Type::kStop, Timestamp("2023-10-23 00:00:03")};
     ASSERT_TRUE(db_.AddRecord(record_3));
 
-    std::vector<Record> records{db_.GetRecords(Timestamp("2023-10-23 00:00:00"))};
+    std::vector<Record> records{db_.GetRecordsByDate(Timestamp("2023-10-23 00:00:00"))};
 
     ASSERT_THAT(records, testing::ElementsAre(record_0, record_1, record_2, record_3));
 }

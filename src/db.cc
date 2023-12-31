@@ -153,7 +153,7 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto records{GetRecords(record.GetTimestamp())};
+    const auto records{GetRecordsByDate(record.GetTimestamp())};
     if(!records.empty())
     {
         if(records.back().GetType() == record.GetType())
@@ -231,7 +231,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
     return Record{static_cast<Type>(type), Timestamp{timestamp2}};
 }
 
-std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
+std::vector<Record> Db::GetRecordsByDate(const Timestamp& timestamp) const
 {
     std::vector<Record> records;
 
