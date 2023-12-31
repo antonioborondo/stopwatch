@@ -117,42 +117,6 @@ std::string Db::Summary(const Timestamp& timestamp)
     return GetTime(result);
 }
 
-int Db::GetLastType()
-{
-    std::string sql{"SELECT type FROM records ORDER BY timestamp DESC LIMIT 1"};
-
-    sqlite3_stmt* stmt{nullptr};
-
-    int retval = sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, 0);
-    int result;
-
-    int idx = 0;
-
-    while(1)
-    {
-        retval = sqlite3_step(stmt);
-
-        if(retval == SQLITE_ROW)
-        {
-            result = sqlite3_column_int(stmt, 0);
-        }
-        else if(retval == SQLITE_DONE)
-        {
-            break;
-        }
-        else
-        {
-            sqlite3_finalize(stmt);
-            printf("Some error encountered\n");
-            break;
-        }
-    }
-
-    sqlite3_finalize(stmt);
-
-    return result;
-}
-
 void Db::DeleteLast()
 {
     char* zErrMsg = 0;

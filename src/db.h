@@ -18,8 +18,6 @@ public:
 
     ~Db();
 
-    int GetLastType();
-
     void DeleteLast();
 
     std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
