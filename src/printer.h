@@ -13,5 +13,5 @@ class Printer
 public:
     Printer(std::ostream& sink = std::cout);
 
-    void PrintRecords(const std::vector<Record> records);
+    void PrintRecords(const std::vector<Record>& records) const;
 };
