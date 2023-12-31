@@ -11,7 +11,7 @@ Printer::Printer(std::ostream& sink):
 {
 }
 
-void Printer::PrintRecords(const std::vector<Record>& records)
+void Printer::PrintRecords(const std::vector<Record>& records) const
 {
     sink_ << "+-------+---------------------+\n";
     sink_ << "| Type  | Timestamp           |\n";

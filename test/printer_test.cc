@@ -7,11 +7,17 @@
 TEST(PrinterTest, PrintNoRecords)
 {
     std::ostringstream sink;
-    Printer printer{sink};
+    const Printer printer{sink};
 
-    std::vector<Record> records;
+    const std::vector<Record> records;
 
     printer.PrintRecords(records);
 
-    ASSERT_EQ("+-------+---------------------+\n| Type  | Timestamp           |\n+-------+---------------------+\n+-------+---------------------+\n", sink.str());
+    const std::string expected_print{
+        "+-------+---------------------+\n"
+        "| Type  | Timestamp           |\n"
+        "+-------+---------------------+\n"
+        "+-------+---------------------+\n"};
+
+    ASSERT_EQ(expected_print, sink.str());
 }
