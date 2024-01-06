@@ -156,17 +156,17 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto records{GetRecordsByDate(Date{record.GetTimestamp().GetDate()})};
-    if(!records.empty())
-    {
-        if(records.back().GetType() == record.GetType())
-        {
-            return false;
-        }
-    }
+    // const auto records{GetRecordsByDate(Date{record.GetTimestamp().GetDate()})};
+    // if(!records.empty())
+    // {
+    //     if(records.back().GetType() == record.GetType())
+    //     {
+    //         return false;
+    //     }
+    // }
 
-    const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
-    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().Get())};
+    const auto sql_format_string{"INSERT INTO records (type, dt, tm) VALUES ({}, '{}', '{}')"};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().GetDate(), record.GetTimestamp().GetTime())};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
