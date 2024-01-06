@@ -24,12 +24,15 @@ Db::Db()
     std::filesystem::path database_file_path{"time_tracker.db"};
 #endif
     sqlite3_open(database_file_path.c_str(), &db_);
-
-    std::string sql{"CREATE TABLE IF NOT EXISTS records"
-                    "("
-                    "   type INTEGER NOT NULL,"
-                    "   timestamp TEXT PRIMARY KEY NOT NULL"
-                    ")"};
+    std::string sql{R"(
+        CREATE TABLE IF NOT EXISTS records
+        (
+            type INTEGER NOT NULL CHECK (type IN (0, 1)),
+            dt TEXT NOT NULL CHECK (date(dt) IS NOT NULL),
+            tm TEXT NOT NULL CHECK (time(tm) IS NOT NULL),
+            PRIMARY KEY (dt, tm)
+        )
+    )"};
 
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
@@ -41,7 +44,7 @@ Db::~Db()
 
 std::string Db::Summary(const Timestamp& timestamp)
 {
-    const auto last_record{GetLastRecord(timestamp)};
+    const auto last_record{GetLastRecord(Date{timestamp.GetDate()})};
     if(last_record.GetType() == Type::kStart)
     {
         AddRecord(Record{Type::kStop, Timestamp::GetCurrent()});
@@ -153,17 +156,17 @@ bool Db::DeleteRecords()
 
 bool Db::AddRecord(const Record& record)
 {
-    const auto records{GetRecords(record.GetTimestamp())};
-    if(!records.empty())
-    {
-        if(records.back().GetType() == record.GetType())
-        {
-            return false;
-        }
-    }
+    // const auto records{GetRecordsByDate(Date{record.GetTimestamp().GetDate()})};
+    // if(!records.empty())
+    // {
+    //     if(records.back().GetType() == record.GetType())
+    //     {
+    //         return false;
+    //     }
+    // }
 
-    const auto sql_format_string{"INSERT INTO records (type, timestamp) VALUES({0}, '{1}')"};
-    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().Get())};
+    const auto sql_format_string{"INSERT INTO records (type, dt, tm) VALUES ({}, '{}', '{}')"};
+    const auto sql{fmt::format(sql_format_string, std::to_string(static_cast<int>(record.GetType())), record.GetTimestamp().GetDate(), record.GetTimestamp().GetTime())};
 
     char* error_message{nullptr};
     const auto result{sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &error_message)};
@@ -178,7 +181,7 @@ bool Db::AddRecord(const Record& record)
     return true;
 }
 
-Record Db::GetLastRecord(const Timestamp& timestamp)
+const Record Db::GetLastRecord(const Date& date)
 {
     const std::string sql_format_string{R"(
         SELECT
@@ -193,8 +196,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
             DESC
         LIMIT 1
     )"};
-
-    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* stmt{nullptr};
 
@@ -231,7 +233,7 @@ Record Db::GetLastRecord(const Timestamp& timestamp)
     return Record{static_cast<Type>(type), Timestamp{timestamp2}};
 }
 
-std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
+const std::vector<Record> Db::GetRecordsByDate(const Date& date) const
 {
     std::vector<Record> records;
 
@@ -244,7 +246,7 @@ std::vector<Record> Db::GetRecords(const Timestamp& timestamp) const
         WHERE
             date(timestamp) = '{0}'
     )"};
-    const auto sql{fmt::format(sql_format_string, timestamp.GetDate())};
+    const auto sql{fmt::format(sql_format_string, date)};
 
     sqlite3_stmt* statement{nullptr};
     int result_code{sqlite3_prepare_v2(db_, sql.c_str(), -1, &statement, nullptr)};

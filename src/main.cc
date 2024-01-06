@@ -1,3 +1,4 @@
+#include "date.h"
 #include "db.h"
 #include "printer.h"
 #include "record.h"
@@ -43,7 +44,7 @@ int main(int argc, char** argv)
         }
         else if(variables_map.count("summary"))
         {
-            printer.PrintRecords(db.GetRecords());
+            printer.PrintRecords(db.GetRecordsByDate(Date::GetCurrent()));
 
             std::cout << "\nTotal time: " << db.Summary() << "\n";
         }
