@@ -24,12 +24,15 @@ Db::Db()
     std::filesystem::path database_file_path{"time_tracker.db"};
 #endif
     sqlite3_open(database_file_path.c_str(), &db_);
-
-    std::string sql{"CREATE TABLE IF NOT EXISTS records"
-                    "("
-                    "   type INTEGER NOT NULL,"
-                    "   timestamp TEXT PRIMARY KEY NOT NULL"
-                    ")"};
+    std::string sql{R"(
+        CREATE TABLE IF NOT EXISTS records
+        (
+            type INTEGER NOT NULL CHECK (type IN (0, 1)),
+            dt TEXT NOT NULL CHECK (date(dt) IS NOT NULL),
+            tm TEXT NOT NULL CHECK (time(tm) IS NOT NULL),
+            PRIMARY KEY (dt, tm)
+        )
+    )"};
 
     sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, nullptr);
 }
