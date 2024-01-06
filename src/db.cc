@@ -16,9 +16,13 @@
 
 Db::Db()
 {
+#ifdef NDEBUG
     std::filesystem::path data_directory{GetDataDirectory()};
     CreateDataDirectory(data_directory);
     std::filesystem::path database_file_path{GetDataDirectory() /= "time_tracker.db"};
+#else
+    std::filesystem::path database_file_path{"time_tracker.db"};
+#endif
     sqlite3_open(database_file_path.c_str(), &db_);
 
     std::string sql{"CREATE TABLE IF NOT EXISTS records"
