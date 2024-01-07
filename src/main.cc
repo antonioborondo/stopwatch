@@ -1,8 +1,6 @@
 #include <iostream>
 
-// clang-format off
-#include "boost/program_options.hpp"
-// clang-format on
+#include <boost/program_options.hpp>
 
 #include "db.h"
 #include "printer.h"
