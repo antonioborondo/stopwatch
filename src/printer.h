@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIME_TRACKER_PRINTER_H_
+#define TIME_TRACKER_PRINTER_H_
 
 #include <iostream>
 #include <ostream>
@@ -14,3 +15,5 @@ class Printer {
 
   void PrintRecords(const std::vector<Record>& records) const;
 };
+
+#endif  // TIME_TRACKER_PRINTER_H_

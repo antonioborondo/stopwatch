@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIME_TRACKER_TYPE_H_
+#define TIME_TRACKER_TYPE_H_
 
 #include <fmt/ostream.h>
 
@@ -13,3 +14,5 @@ std::ostream& operator<<(std::ostream& os, const Type& type);
 
 template <>
 struct fmt::formatter<Type> : ostream_formatter {};
+
+#endif  // TIME_TRACKER_TYPE_H_

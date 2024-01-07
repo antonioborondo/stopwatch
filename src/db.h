@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TIME_TRACKER_DB_H_
+#define TIME_TRACKER_DB_H_
 
 #include <filesystem>
 #include <string>
@@ -37,3 +38,5 @@ class Db {
 
   void CreateDataDirectory(const std::filesystem::path& data_directory);
 };
+
+#endif  // TIME_TRACKER_DB_H_
