@@ -3,8 +3,6 @@
 #include <fmt/format.h>
 #include <sqlite3.h>
 
-#include <cstdlib>
-#include <cstring>
 #include <filesystem>
 #include <iostream>
 #include <string>

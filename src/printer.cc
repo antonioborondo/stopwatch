@@ -2,9 +2,10 @@
 
 #include <fmt/format.h>
 
+#include <ostream>
+#include <vector>
+
 #include "record.h"
-#include "timestamp.h"
-#include "type.h"
 
 Printer::Printer(std::ostream& sink) : sink_{sink} {}
 

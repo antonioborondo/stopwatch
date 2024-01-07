@@ -1,6 +1,7 @@
 #include "record.h"
 
 #include "timestamp.h"
+#include "type.h"
 
 Record::Record(Type type, const Timestamp& timestamp)
     : type_{type}, timestamp_{timestamp} {}
