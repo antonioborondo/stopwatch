@@ -1,39 +1,44 @@
-#pragma once
-
-#include "record.h"
-#include "timestamp.h"
+#ifndef TIME_TRACKER_DB_H_
+#define TIME_TRACKER_DB_H_
 
 #include <filesystem>
 #include <string>
 #include <vector>
 
-struct sqlite3;
+// clang-format off
+#include "sqlite3.h"
+// clang-format on
 
-class Db
-{
-    sqlite3* db_;
+#include "record.h"
+#include "timestamp.h"
 
-public:
-    Db();
+class Db {
+  sqlite3* db_;
 
-    ~Db();
+ public:
+  Db();
 
-    void DeleteLast();
+  ~Db();
 
-    std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
+  void DeleteLast();
 
-    bool DeleteRecords();
+  std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
 
-    bool AddRecord(const Record& record);
+  bool DeleteRecords();
 
-    Record GetLastRecord(const Timestamp& timestamp);
+  bool AddRecord(const Record& record);
 
-    std::vector<Record> GetRecords(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
+  Record GetLastRecord(const Timestamp& timestamp);
 
-private:
-    std::string GetTime(double time_in_days);
+  std::vector<Record> GetRecords(
+      const Timestamp& timestamp = Timestamp::GetCurrent()) const;
 
-    std::filesystem::path GetDataDirectory();
+ private:
+  std::string GetTime(double time_in_days);
 
-    void CreateDataDirectory(const std::filesystem::path& data_directory);
+  std::filesystem::path GetDataDirectory();
+
+  void CreateDataDirectory(const std::filesystem::path& data_directory);
 };
+
+#endif  // TIME_TRACKER_DB_H_

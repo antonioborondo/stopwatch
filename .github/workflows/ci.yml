@@ -19,7 +19,7 @@ jobs:
     - name: Lint
       uses: DoozyX/clang-format-lint-action@v0.17
       with:
-        clangFormatVersion: 13
+        clangFormatVersion: 14
   build:
     needs: clang-format
     runs-on: ubuntu-22.04

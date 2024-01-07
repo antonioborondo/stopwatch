@@ -1,17 +1,19 @@
-#pragma once
-
-#include "record.h"
+#ifndef TIME_TRACKER_PRINTER_H_
+#define TIME_TRACKER_PRINTER_H_
 
 #include <iostream>
 #include <ostream>
 #include <vector>
 
-class Printer
-{
-    std::ostream& sink_;
+#include "record.h"
 
-public:
-    Printer(std::ostream& sink = std::cout);
+class Printer {
+  std::ostream& sink_;
 
-    void PrintRecords(const std::vector<Record>& records) const;
+ public:
+  Printer(std::ostream& sink = std::cout);
+
+  void PrintRecords(const std::vector<Record>& records) const;
 };
+
+#endif  // TIME_TRACKER_PRINTER_H_

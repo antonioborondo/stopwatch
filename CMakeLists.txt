@@ -5,55 +5,55 @@ project(time_tracker VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(time_tracker_common STATIC
-    src/db.cc
-    src/printer.cc
-    src/record.cc
-    src/timestamp.cc
-    src/type.cc
+  src/db.cc
+  src/printer.cc
+  src/record.cc
+  src/timestamp.cc
+  src/type.cc
 )
 
 target_include_directories(time_tracker_common
-    PUBLIC
-    src
+  PUBLIC
+  src
 )
 
 find_package(fmt REQUIRED)
 find_package(SQLite3 REQUIRED)
 
 target_link_libraries(time_tracker_common
-    PRIVATE
-    SQLite::SQLite3
-    PUBLIC
-    fmt::fmt
+  PUBLIC
+  fmt::fmt
+  PRIVATE
+  SQLite::SQLite3
 )
 
 add_executable(time_tracker
-    src/main.cc
+  src/main.cc
 )
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 
 target_link_libraries(time_tracker
-    PRIVATE
-    Boost::program_options
-    time_tracker_common
+  PRIVATE
+  Boost::program_options
+  time_tracker_common
 )
 
 add_executable(time_tracker_test
-    test/db_test.cc
-    test/printer_test.cc
-    test/record_test.cc
-    test/timestamp_test.cc
-    test/type_test.cc
+  test/db_test.cc
+  test/printer_test.cc
+  test/record_test.cc
+  test/timestamp_test.cc
+  test/type_test.cc
 )
 
 find_package(GTest REQUIRED)
 
 target_link_libraries(time_tracker_test
-    PRIVATE
-    GTest::gmock
-    GTest::gtest_main
-    time_tracker_common
+  PRIVATE
+  GTest::gmock
+  GTest::gtest_main
+  time_tracker_common
 )
 
 enable_testing()
