@@ -1,3 +1,18 @@
 ---
 BasedOnStyle: Google
+IncludeBlocks: Regroup
+IncludeCategories:
+# Other libraries' headers
+  - Regex: '<(boost|fmt|gmock|gtest|sqlite)'
+    Priority: 3
+# C system headers
+  - Regex: '<[a-z0-9_]+(\.h)?>'
+    Priority: 1
+# C++ standard library headers
+  - Regex: '<.*'
+    Priority: 2
+# Your project's headers
+  - Regex: '.*'
+    Priority: 4
+SortIncludes: CaseInsensitive
 ...

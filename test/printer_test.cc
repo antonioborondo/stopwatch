@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-// clang-format off
-#include "gtest/gtest.h"
-// clang-format on
+#include <gtest/gtest.h>
 
 #include "record.h"
 

@@ -3,9 +3,7 @@
 #include <ostream>
 #include <vector>
 
-// clang-format off
-#include "fmt/format.h"
-// clang-format on
+#include <fmt/format.h>
 
 #include "record.h"
 

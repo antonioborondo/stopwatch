@@ -5,9 +5,7 @@
 #include <string>
 #include <vector>
 
-// clang-format off
-#include "sqlite3.h"
-// clang-format on
+#include <sqlite3.h>
 
 #include "record.h"
 #include "timestamp.h"

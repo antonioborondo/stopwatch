@@ -4,7 +4,7 @@
 #include <ostream>
 #include <string>
 
-#include "fmt/ostream.h"
+#include <fmt/ostream.h>
 
 class Timestamp {
  public:

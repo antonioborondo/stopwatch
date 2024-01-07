@@ -3,7 +3,7 @@
 
 #include <ostream>
 
-#include "fmt/ostream.h"
+#include <fmt/ostream.h>
 
 enum class Type {
   kStop = 0,

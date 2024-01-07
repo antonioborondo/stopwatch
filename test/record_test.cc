@@ -1,8 +1,6 @@
 #include "record.h"
 
-// clang-format off
-#include "gtest/gtest.h"
-// clang-format on
+#include <gtest/gtest.h>
 
 #include "timestamp.h"
 

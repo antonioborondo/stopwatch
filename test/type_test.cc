@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 TEST(TypeTest, Sink) {
   std::ostringstream sink;
