@@ -1,12 +1,14 @@
 #include "db.h"
 
-#include <fmt/format.h>
-#include <sqlite3.h>
-
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
+
+// clang-format off
+#include "fmt/format.h"
+#include "sqlite3.h"
+// clang-format on
 
 #include "record.h"
 #include "timestamp.h"

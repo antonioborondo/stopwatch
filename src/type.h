@@ -1,9 +1,9 @@
 #ifndef TIME_TRACKER_TYPE_H_
 #define TIME_TRACKER_TYPE_H_
 
-#include <fmt/ostream.h>
-
 #include <ostream>
+
+#include "fmt/ostream.h"
 
 enum class Type {
   kStop = 0,

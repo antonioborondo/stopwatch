@@ -1,8 +1,8 @@
 #include "type.h"
 
-#include <gtest/gtest.h>
-
 #include <sstream>
+
+#include "gtest/gtest.h"
 
 TEST(TypeTest, Sink) {
   std::ostringstream sink;

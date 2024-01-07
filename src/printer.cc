@@ -1,9 +1,11 @@
 #include "printer.h"
 
-#include <fmt/format.h>
-
 #include <ostream>
 #include <vector>
+
+// clang-format off
+#include "fmt/format.h"
+// clang-format on
 
 #include "record.h"
 

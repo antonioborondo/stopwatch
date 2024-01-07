@@ -1,10 +1,10 @@
 #ifndef TIME_TRACKER_TIMESTAMP_H_
 #define TIME_TRACKER_TIMESTAMP_H_
 
-#include <fmt/ostream.h>
-
 #include <ostream>
 #include <string>
+
+#include "fmt/ostream.h"
 
 class Timestamp {
  public:

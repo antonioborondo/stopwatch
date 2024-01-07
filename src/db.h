@@ -1,11 +1,13 @@
 #ifndef TIME_TRACKER_DB_H_
 #define TIME_TRACKER_DB_H_
 
-#include <sqlite3.h>
-
 #include <filesystem>
 #include <string>
 #include <vector>
+
+// clang-format off
+#include "sqlite3.h"
+// clang-format on
 
 #include "record.h"
 #include "timestamp.h"

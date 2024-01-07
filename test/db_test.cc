@@ -1,7 +1,9 @@
 #include "db.h"
 
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+// clang-format off
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
+// clang-format on
 
 #include "record.h"
 #include "type.h"

@@ -1,10 +1,12 @@
 #include "printer.h"
 
-#include <gtest/gtest.h>
-
 #include <sstream>
 #include <string>
 #include <vector>
+
+// clang-format off
+#include "gtest/gtest.h"
+// clang-format on
 
 #include "record.h"
 
