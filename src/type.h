@@ -4,14 +4,12 @@
 
 #include <ostream>
 
-enum class Type
-{
-    kStop = 0,
-    kStart,
+enum class Type {
+  kStop = 0,
+  kStart,
 };
 
 std::ostream& operator<<(std::ostream& os, const Type& type);
 
-template<>
-struct fmt::formatter<Type>: ostream_formatter
-{};
+template <>
+struct fmt::formatter<Type> : ostream_formatter {};

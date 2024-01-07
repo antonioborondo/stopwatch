@@ -1,39 +1,39 @@
 #pragma once
 
-#include "record.h"
-#include "timestamp.h"
-
 #include <filesystem>
 #include <string>
 #include <vector>
 
+#include "record.h"
+#include "timestamp.h"
+
 struct sqlite3;
 
-class Db
-{
-    sqlite3* db_;
+class Db {
+  sqlite3* db_;
 
-public:
-    Db();
+ public:
+  Db();
 
-    ~Db();
+  ~Db();
 
-    void DeleteLast();
+  void DeleteLast();
 
-    std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
+  std::string Summary(const Timestamp& timestamp = Timestamp::GetCurrent());
 
-    bool DeleteRecords();
+  bool DeleteRecords();
 
-    bool AddRecord(const Record& record);
+  bool AddRecord(const Record& record);
 
-    Record GetLastRecord(const Timestamp& timestamp);
+  Record GetLastRecord(const Timestamp& timestamp);
 
-    std::vector<Record> GetRecords(const Timestamp& timestamp = Timestamp::GetCurrent()) const;
+  std::vector<Record> GetRecords(
+      const Timestamp& timestamp = Timestamp::GetCurrent()) const;
 
-private:
-    std::string GetTime(double time_in_days);
+ private:
+  std::string GetTime(double time_in_days);
 
-    std::filesystem::path GetDataDirectory();
+  std::filesystem::path GetDataDirectory();
 
-    void CreateDataDirectory(const std::filesystem::path& data_directory);
+  void CreateDataDirectory(const std::filesystem::path& data_directory);
 };
