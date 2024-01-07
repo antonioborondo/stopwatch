@@ -1,14 +1,14 @@
 #ifndef TIME_TRACKER_DB_H_
 #define TIME_TRACKER_DB_H_
 
+#include <sqlite3.h>
+
 #include <filesystem>
 #include <string>
 #include <vector>
 
 #include "record.h"
 #include "timestamp.h"
-
-struct sqlite3;
 
 class Db {
   sqlite3* db_;
