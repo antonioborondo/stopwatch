@@ -14,5 +14,4 @@ IncludeCategories:
 # Your project's headers
   - Regex: '.*'
     Priority: 4
-SortIncludes: CaseInsensitive
 ...
