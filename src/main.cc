@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 
       std::cout << "\nTotal time: " << db.Summary() << "\n";
     } else if (variables_map.count("version")) {
-      std::cout << "time_tracker 1.0.0" << std::endl;
+      std::cout << "time_tracker 1.1.0" << std::endl;
     } else {
       std::cout << "Usage: time_tracker [OPTION]" << std::endl;
       std::cout << options_description << std::endl;

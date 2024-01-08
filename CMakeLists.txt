@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28.1)
 
-project(time_tracker VERSION 1.0.0)
+project(time_tracker VERSION 1.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
